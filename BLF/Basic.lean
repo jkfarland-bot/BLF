@@ -1,4 +1,8 @@
-import BLF.Defs
+module
+
+public import BLF.Defs
+
+@[expose] public section
 
 namespace BLF
 

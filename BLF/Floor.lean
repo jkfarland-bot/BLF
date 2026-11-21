@@ -1,4 +1,8 @@
-import BLF.Canon
+module
+
+public import BLF.Canon
+
+@[expose] public section
 
 namespace BLF
 

@@ -1,4 +1,8 @@
-import BLF.Affine
+module
+
+public import BLF.Affine
+
+@[expose] public section
 
 namespace BLF
 

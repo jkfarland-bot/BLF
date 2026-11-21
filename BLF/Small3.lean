@@ -1,4 +1,8 @@
-import BLF.Data3
+module
+
+public import BLF.Data3
+
+@[expose] public section
 
 namespace BLF
 namespace N3
@@ -16,7 +20,10 @@ theorem fixedOk : ∀ m < 2 ^ 3, m ∉ order → vtx 3 m = v0 ∨ ∃ i, vtx 3 m
 theorem vtxOk : ∀ x : Fin 3 → Bool, vtx 3 (idx x) = x ∧ idx x < 2 ^ 3 := by decide +kernel
 theorem witOk' : wits.all (witOk 3) = true := by decide +kernel
 theorem canonOk' : wits.all (fun w => canonOk 3 w.1) = true := by decide +kernel
-theorem cardS : (((wits.map (·.1)).map (ofList (n := 3))).toFinset).card = 13 := by decide +kernel
+theorem idxOk : ∀ k < 2 ^ 3, idx (vtx 3 k) = k := by decide +kernel
+theorem nodupOk : (wits.map (fun w => bitsVal w.1)).Nodup := by decide +kernel
+theorem cardS : (((wits.map (·.1)).map (ofList (n := 3))).toFinset).card = 13 := by
+  rw [card_classes 3 wits lenOk idxOk nodupOk]; decide +kernel
 
 end N3
 end BLF

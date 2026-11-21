@@ -1,0 +1,19 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "BLF.floor_parallelogram",
+    "BLF.threshold_isBLF",
+    "BLF.isBLF_xor_affB",
+    "BLF.blf_count_one",
+    "BLF.blf_count_two",
+    "BLF.blf_count_three",
+    "BLF.blf_count_four"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}

@@ -1,11 +1,12 @@
-import BLF.Data4
+module
+
+public import BLF.Check4
+
+@[expose] public section
 
 namespace BLF
 namespace N4
 
-def masks : List ℕ := wits.map (fun w => bitsVal w.1)
-theorem check : search cons (fun _ => 4) (fun g => masks.contains (bitsVal (parList (2 ^ 4) g)))
-    order (fun _ => 0) = true := by decide +kernel
 theorem lenOk : wits.all (fun w => w.1.length == 2 ^ 4) = true := by decide +kernel
 theorem wf : wfB cons order = true := by decide +kernel
 theorem consOk : order.all (fun k => (cons k).all fun q => allQ.contains q) = true := by decide +kernel
@@ -16,7 +17,10 @@ theorem fixedOk : ∀ m < 2 ^ 4, m ∉ order → vtx 4 m = v0 ∨ ∃ i, vtx 4 m
 theorem vtxOk : ∀ x : Fin 4 → Bool, vtx 4 (idx x) = x ∧ idx x < 2 ^ 4 := by decide +kernel
 theorem witOk' : wits.all (witOk 4) = true := by decide +kernel
 theorem canonOk' : wits.all (fun w => canonOk 4 w.1) = true := by decide +kernel
-theorem cardS : (((wits.map (·.1)).map (ofList (n := 4))).toFinset).card = 324 := by decide +kernel
+theorem idxOk : ∀ k < 2 ^ 4, idx (vtx 4 k) = k := by decide +kernel
+theorem nodupOk : (wits.map (fun w => bitsVal w.1)).Nodup := by decide +kernel
+theorem cardS : (((wits.map (·.1)).map (ofList (n := 4))).toFinset).card = 324 := by
+  rw [card_classes 4 wits lenOk idxOk nodupOk]; decide +kernel
 
 end N4
 end BLF

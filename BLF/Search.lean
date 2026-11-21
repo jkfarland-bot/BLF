@@ -1,4 +1,8 @@
-import BLF.Floor
+module
+
+public import BLF.Floor
+
+@[expose] public section
 
 /-!
 # A verified pruned search over integer vectors
@@ -14,8 +18,16 @@ namespace BLF
 
 abbrev Quad := ℕ × ℕ × ℕ × ℕ
 
-/-- Parallelogram constraint `|g a + g b - g c - g d| ≤ 1`. -/
-def okQ (g : ℕ → ℤ) (q : Quad) : Bool := decide (|g q.1 + g q.2.1 - g q.2.2.1 - g q.2.2.2| ≤ 1)
+/-- Parallelogram constraint `|g a + g b - g c - g d| ≤ 1`, as two integer comparisons. -/
+def okQ (g : ℕ → ℤ) (q : Quad) : Bool :=
+  decide (-1 ≤ g q.1 + g q.2.1 - g q.2.2.1 - g q.2.2.2) &&
+    decide (g q.1 + g q.2.1 - g q.2.2.1 - g q.2.2.2 ≤ 1)
+
+lemma okQ_of_abs (g : ℕ → ℤ) (q : Quad) (h : |g q.1 + g q.2.1 - g q.2.2.1 - g q.2.2.2| ≤ 1) :
+    okQ g q = true := by
+  rw [abs_le] at h
+  simp only [okQ, Bool.and_eq_true]
+  exact ⟨decide_eq_true h.1, decide_eq_true h.2⟩
 
 /-- The integers `-B, ..., B`. -/
 def rangeZ (B : ℕ) : List ℤ := List.map (fun t : ℕ => (t : ℤ) - (B : ℤ)) (List.range (2 * B + 1))
@@ -81,5 +93,22 @@ theorem search_sound (cons : ℕ → List Quad) (bound : ℕ → ℕ) (leaf : (�
     simp only [Bool.not_true, Bool.false_or] at hk
     exact ih g' G hk hwf agree (fun k' hk' => hb k' (by simp [hk']))
       (fun k' hk' => hc k' (by simp [hk']))
+
+/-- One step of the search, as a statement about every candidate value. -/
+lemma search_split (cons : ℕ → List Quad) (bound : ℕ → ℕ) (leaf : (ℕ → ℤ) → Bool) (k : ℕ)
+    (ks : List ℕ) (g : ℕ → ℤ) :
+    search cons bound leaf (k :: ks) g = true ↔ ∀ v ∈ rangeZ (bound k),
+      (cons k).all (okQ (Function.update g k v)) = true →
+        search cons bound leaf ks (Function.update g k v) = true := by
+  rw [search, List.all_eq_true]
+  constructor
+  · intro h v hv hc
+    have := h v hv
+    rw [hc] at this
+    simpa using this
+  · intro h v hv
+    cases hc : (cons k).all (okQ (Function.update g k v))
+    · rfl
+    · simp only [Bool.not_true, Bool.false_or]; exact h v hv hc
 
 end BLF

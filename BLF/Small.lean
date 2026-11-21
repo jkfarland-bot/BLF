@@ -1,4 +1,8 @@
-import BLF.Search
+module
+
+public import BLF.Search
+
+@[expose] public section
 
 namespace BLF
 
@@ -147,9 +151,9 @@ theorem small_count (n : ℕ) (allQ : List Quad) (cons : ℕ → List Quad) (ord
           intro q hq
           have hqA : q ∈ allQ := by simpa using hk' q hq
           obtain ⟨l1, l2, l3, l4, hr⟩ := h_rel q hqA
-          unfold okQ
+          apply okQ_of_abs
           simp only [hG', l1, l2, l3, l4, if_true]
-          exact decide_eq_true (Gof_par j K a _ _ _ _ hr))
+          exact Gof_par j K a _ _ _ _ hr)
       have hmem : parList (2 ^ n) G' ∈ wits.map (·.1) := by
         rw [h_masks] at hleaf
         simp only [List.contains_iff_mem, List.mem_map] at hleaf
@@ -202,5 +206,38 @@ theorem small_count (n : ℕ) (allQ : List Quad) (cons : ℕ → List Quad) (ord
   · simp only [ofList, idx_ve]
     have := hi i.val (List.mem_range.mpr i.isLt)
     simpa using this
+
+end BLF
+
+namespace BLF
+
+/-- The class set has as many elements as there are witnesses, when the truth tables are
+pairwise distinct (checked on their binary values) and of full length. -/
+theorem card_classes (n : ℕ) (wits : List Wit)
+    (h_len : wits.all (fun w => w.1.length == 2 ^ n) = true)
+    (h_idx : ∀ k < 2 ^ n, idx (vtx n k) = k)
+    (h_nd : (wits.map (fun w => bitsVal w.1)).Nodup) :
+    (((wits.map (·.1)).map (ofList (n := n))).toFinset).card = wits.length := by
+  have hmap : wits.map (fun w => bitsVal w.1) = (wits.map (·.1)).map bitsVal := by
+    simp [List.map_map, Function.comp_def]
+  rw [hmap] at h_nd
+  have nd1 : (wits.map (·.1)).Nodup := h_nd.of_map _
+  have hl : ∀ l ∈ wits.map (·.1), l.length = 2 ^ n := by
+    intro l hl
+    rw [List.mem_map] at hl
+    obtain ⟨w, hw, rfl⟩ := hl
+    rw [List.all_eq_true] at h_len
+    simpa using h_len w hw
+  have inj : ∀ l1 ∈ wits.map (·.1), ∀ l2 ∈ wits.map (·.1),
+      ofList (n := n) l1 = ofList (n := n) l2 → l1 = l2 := by
+    intro l1 h1 l2 h2 he
+    apply List.ext_getElem (by rw [hl l1 h1, hl l2 h2])
+    intro k hk1 hk2
+    have hk : k < 2 ^ n := by rw [← hl l1 h1]; exact hk1
+    have := congrFun he (vtx n k)
+    simp only [ofList, h_idx k hk, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hk1,
+      List.getElem?_eq_getElem hk2, Option.getD_some] at this
+    exact this
+  rw [List.toFinset_card_of_nodup (nd1.map_on inj), List.length_map, List.length_map]
 
 end BLF

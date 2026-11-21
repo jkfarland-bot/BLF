@@ -1,9 +1,14 @@
-import BLF.Defs
-import BLF.Basic
-import BLF.Affine
-import BLF.Canon
-import BLF.Floor
-import BLF.Search
-import BLF.Small
-import BLF.Small3
-import BLF.Small4
+module
+
+public import BLF.Defs
+public import BLF.Basic
+public import BLF.Affine
+public import BLF.Canon
+public import BLF.Floor
+public import BLF.Search
+public import BLF.Threshold
+public import BLF.Small
+public import BLF.Small1
+public import BLF.Small2
+public import BLF.Small3
+public import BLF.Small4
