@@ -24,8 +24,10 @@ twbound n (threshold weight bound M_n, exhaustive): n=1..5: 2, 3, 5, 9, 18
 thresh n M q unfold:
   thresholds 4, 14, 104, 1,882, 94,572 (n=1..5; folded and direct agree for n<=4)
   threshold XOR affine classes 1, 2, 13, 323, 25,997; BLF classes 1, 2, 13, 324, 29,747; 0 TXA classes outside BLF
-  n=4 extra class: canonical 0x7ee8 = canon(bit 1 of x1+x2+x3+x4)
+  n=4 extra class: normalized table 0x7ee8 (same convention as below) = class of bit 1 of x1+x2+x3+x4
   n=5 extras: 3,750 classes, 15 orbits of sizes 5, 80, 80, 320, 320, 480, 960, 160, 640, 160, 1, 32, 160, 320, 32
-    min canonical tables 0x3ffcfcc0 0x1ff8f8e0 0x177ee8e8 0x18088e8 0x180e8e8 0x3c0c0e8 0x180a8e8 0x177ee880
+    representatives (convention: table bit x is f(x), x = x1 + 2 x2 + ...; each class normalized by XOR
+    with the affine function that makes f(0) = f(e_i) = 0; the least such normalized table in the orbit):
+    0x3ffcfcc0 0x1ff8f8e0 0x177ee8e8 0x18088e8 0x180e8e8 0x3c0c0e8 0x180a8e8 0x177ee880
     0x380c0e8 0x33e3ee8 0x177e7ee8 0x18080e8 0x37e7ee8 0x17e7ee8 0x77e7ee8
 ca_classes.py: BLF(3) = 208; 88 classes; 73 BLF; non-BLF 6 9 18 27 29 33 40 46 58 72 78 130 132 172 184; no mixed class; rule 110 BLF
