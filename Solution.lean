@@ -54,4 +54,15 @@ theorem blf_count_three : Nat.card {f : (Fin 3 → Bool) → Bool // IsBLF f} = 
 theorem blf_count_four : Nat.card {f : (Fin 4 → Bool) → Bool // IsBLF f} = 10368 :=
   card_blf_four
 
+/-- For three variables, BLF is exactly threshold XOR affine. -/
+theorem blf_three_iff_threshold_xor_affine (f : (Fin 3 → Bool) → Bool) : IsBLF f ↔ IsTXA f :=
+  blf_three_iff_txa' f
+
+/-- For four variables, BLF is threshold XOR affine together with the affine translates of
+bit 1 of `x_1 + x_2 + x_3 + x_4`. -/
+theorem blf_four_iff (f : (Fin 4 → Bool) → Bool) :
+    IsBLF f ↔ IsTXA f ∨
+      ∃ (c : Bool) (b : Fin 4 → Bool), ∀ x, f x = xor (bitAt 1 (∑ i, bval (x i))) (affB c b x) :=
+  blf_four_iff' f
+
 end BLF

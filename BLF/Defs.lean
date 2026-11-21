@@ -34,5 +34,10 @@ def IsBLF {n : ℕ} (f : (Fin n → Bool) → Bool) : Prop :=
 def affB {n : ℕ} (c : Bool) (b : Fin n → Bool) (x : Fin n → Bool) : Bool :=
   (bval c + ∑ i, bval (b i) * bval (x i)) % 2 = 1
 
+/-- `f` is a threshold function `[w_0 + w.x > 0]` XOR a GF(2)-affine function. -/
+def IsTXA {n : ℕ} (f : (Fin n → Bool) → Bool) : Prop :=
+  ∃ (w0 : ℤ) (w : Fin n → ℤ) (c : Bool) (b : Fin n → Bool),
+    ∀ x, f x = xor (decide (0 < w0 + ∑ i, w i * bval (x i))) (affB c b x)
+
 end BLF
 -- END STATEMENT DEFINITIONS

@@ -51,6 +51,11 @@ def IsBLF {n : ℕ} (f : (Fin n → Bool) → Bool) : Prop :=
 def affB {n : ℕ} (c : Bool) (b : Fin n → Bool) (x : Fin n → Bool) : Bool :=
   (bval c + ∑ i, bval (b i) * bval (x i)) % 2 = 1
 
+/-- `f` is a threshold function `[w_0 + w.x > 0]` XOR a GF(2)-affine function. -/
+def IsTXA {n : ℕ} (f : (Fin n → Bool) → Bool) : Prop :=
+  ∃ (w0 : ℤ) (w : Fin n → ℤ) (c : Bool) (b : Fin n → Bool),
+    ∀ x, f x = xor (decide (0 < w0 + ∑ i, w i * bval (x i))) (affB c b x)
+
 end BLF
 -- END STATEMENT DEFINITIONS
 
@@ -91,6 +96,17 @@ theorem blf_count_three : Nat.card {f : (Fin 3 → Bool) → Bool // IsBLF f} = 
 
 /-- `|BLF(4)| = 10368` of the 65536 Boolean functions of four variables. -/
 theorem blf_count_four : Nat.card {f : (Fin 4 → Bool) → Bool // IsBLF f} = 10368 := by
+  sorry
+
+/-- For three variables, BLF is exactly threshold XOR affine. -/
+theorem blf_three_iff_threshold_xor_affine (f : (Fin 3 → Bool) → Bool) : IsBLF f ↔ IsTXA f := by
+  sorry
+
+/-- For four variables, BLF is threshold XOR affine together with the affine translates of
+bit 1 of `x_1 + x_2 + x_3 + x_4`. -/
+theorem blf_four_iff (f : (Fin 4 → Bool) → Bool) :
+    IsBLF f ↔ IsTXA f ∨
+      ∃ (c : Bool) (b : Fin 4 → Bool), ∀ x, f x = xor (bitAt 1 (∑ i, bval (x i))) (affB c b x) := by
   sorry
 
 end BLF
