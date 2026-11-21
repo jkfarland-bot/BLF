@@ -9,7 +9,9 @@ project:
     floors of (K + a.x) / 2^j satisfy every parallelogram inequality on the cube, that every
     threshold function is BLF, and that BLF is closed under XOR with GF(2)-affine functions; and
     it proves the exact counts |BLF(n)| = 4, 16, 208 and 10368 for n = 1, 2, 3 and 4 by a verified
-    pruned search checked by the kernel.
+    pruned search checked by the kernel, that BLF(3) is exactly the threshold functions XOR
+    GF(2)-affine functions, and that BLF(4) adds exactly the affine translates of bit 1 of
+    x1 + x2 + x3 + x4.
   authors:
     - "Joseph S. Farland"
   license: "Apache-2.0"
@@ -51,7 +53,10 @@ status:
   scope: >-
     Formalized: the parallelogram inequality for floors of linear forms, threshold implies BLF and
     closure of BLF under XOR with GF(2)-affine functions (every n), and the exact counts
-    |BLF(n)| for n = 1, 2, 3, 4. Not formalized, and labeled in the preprint as computer-certified
+    |BLF(n)| for n = 1, 2, 3, 4, the equality BLF(3) = threshold XOR affine and the description of
+    BLF(4) as threshold XOR affine together with the translates of bit 1 of x1 + x2 + x3 + x4.
+    Not formalized (computer-certified in the preprint): that the extra class at n = 4 is not
+    itself threshold XOR affine. Not formalized, and labeled in the preprint as computer-certified
     or as paper proofs: the characterization by floor(u) mod 2 for real affine u, the identity
     |BLF(n)| = 2^n (R_n + 1) with the toric chamber count R_n, the counts for n = 5 and 6, the
     asymptotics, the anti-Hadamard second-order term, and the cellular-automaton results.
@@ -92,7 +97,8 @@ fidelity:
     Bit j of an integer N is (N / 2^j) % 2 with Int division (floor for a positive divisor), which
     is two's complement for negative N; the coefficients and constant are arbitrary integers and
     j is unbounded. The GF(2)-affine functions are written as (c + sum b_i x_i) mod 2 over the
-    integers (affB).
+    integers (affB); threshold functions are [w0 + w.x > 0] with integer weights (every threshold
+    function has an integer realization, so nothing is lost).
 
 review:
   status: "agent-reviewed"
@@ -126,5 +132,15 @@ alignment:
       module: "Challenge"
       status: "proved"
       note: "Also BLF.blf_count_one, blf_count_two, blf_count_three (4, 16, 208)."
+    - source: "TEMPLATE: paper numbering, n = 3 equality"
+      lean: "BLF.blf_three_iff_threshold_xor_affine"
+      module: "Challenge"
+      status: "proved"
+      note: "IsBLF f iff IsTXA f for every f of three variables."
+    - source: "TEMPLATE: paper numbering, n = 4 decomposition"
+      lean: "BLF.blf_four_iff"
+      module: "Challenge"
+      status: "proved"
+      note: "IsBLF f iff IsTXA f or f is bit 1 of x1 + x2 + x3 + x4 XOR an affine function."
 
 acknowledgements: "Lean 4 and Mathlib; Claude (Anthropic) agent seats for the mathematics and the formalization; the Palomar starter template for the check scripts."
