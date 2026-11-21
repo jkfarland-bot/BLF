@@ -36,3 +36,11 @@ parallelogram n (integer G with G(0)=G(e_i)=0 and every parallelogram second dif
   n=1..6: 1, 3, 25, 647, 59,493, 21,238,195 (n=6: 4,816 relations, 75 s) = R_n.
   So for n <= 6 the parallelogram inequalities characterize the floor vectors of affine functions
   (observation; a third route to R_6, independent of grids and of the vertex formula).
+
+orbits n q (classes and their orbits under input permutations and complementations):
+  classes 1, 2, 13, 324, 29,747, 10,619,098 (n=1..6); orbits 1, 2, 4, 12, 66, 1,000
+
+Lean (v4.35.0-rc2, Mathlib), kernel-checked, axioms propext, Classical.choice, Quot.sound only:
+  BLF.card_blf_three : Nat.card {f : (Fin 3 -> Bool) -> Bool // IsBLF f} = 208
+  BLF.card_blf_four  : Nat.card {f : (Fin 4 -> Bool) -> Bool // IsBLF f} = 10368   (Small4 kernel check about 5 min)
+  general n: flo_par (parallelogram lemma), IsBLF.xor_aff, card_of_canon, canon_eq_Gof, search_sound, small_count
