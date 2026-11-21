@@ -8,10 +8,12 @@ namespace BLF
 namespace N2
 
 def masks : List ℕ := wits.map (fun w => bitsVal w.1)
-theorem check : search cons (fun _ => 2) (fun g => masks.contains (bitsVal (parList (2 ^ 2) g)))
+theorem check : search cons bnd (fun g => masks.contains (bitsVal (parList (2 ^ 2) g)))
     order (fun _ => 0) = true := by decide +kernel
 theorem lenOk : wits.all (fun w => w.1.length == 2 ^ 2) = true := by decide +kernel
 theorem wf : wfB cons order = true := by decide +kernel
+theorem bndOk : ∀ k ∈ order, (Finset.univ.filter fun i : Fin 2 => vtx 2 k i = true).card = bnd k + 1 := by
+  decide +kernel
 theorem consOk : order.all (fun k => (cons k).all fun q => allQ.contains q) = true := by decide +kernel
 theorem relOk : ∀ q ∈ allQ, q.1 < 2 ^ 2 ∧ q.2.1 < 2 ^ 2 ∧ q.2.2.1 < 2 ^ 2 ∧ q.2.2.2 < 2 ^ 2 ∧
     Rel (vtx 2 q.1) (vtx 2 q.2.1) (vtx 2 q.2.2.1) (vtx 2 q.2.2.2) := by
@@ -32,7 +34,7 @@ namespace BLF
 
 /-- **|BLF(2)| = 16.** -/
 theorem card_blf_two : Nat.card {f : (Fin 2 → Bool) → Bool // IsBLF f} = 16 := by
-  rw [(small_count 2 N2.allQ N2.cons N2.order N2.wits N2.masks N2.check rfl N2.lenOk N2.wf N2.consOk N2.relOk
+  rw [(small_count 2 N2.allQ N2.cons N2.order N2.wits N2.bnd N2.masks N2.check N2.bndOk rfl N2.lenOk N2.wf N2.consOk N2.relOk
     N2.fixedOk N2.vtxOk N2.witOk' N2.canonOk').2, N2.cardS]
   norm_num
 

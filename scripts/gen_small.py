@@ -47,6 +47,7 @@ out.append("def consTable : List (ℕ × List Quad) := [" + ",\n  ".join(
     f"({k}, [" + ", ".join(f"({a}, {b}, {c}, {d})" for a, b, c, d in cons[k]) + "])" for k in order) + "]\n")
 out.append("def cons (k : ℕ) : List Quad := ((consTable.find? (·.1 == k)).map (·.2)).getD []\n")
 out.append("def order : List ℕ := [" + ", ".join(map(str, order)) + "]\n")
+out.append(f"def bnd (k : ℕ) : ℕ := (List.range {n}).countP (fun i => k.testBit i) - 1\n")
 out.append("def wits : List Wit := [" + ",\n  ".join(
     "([" + ", ".join(lb(b) for b in T) + f"], {j}, {K}, [" + ", ".join(map(str, a)) + "])"
     for T, (j, K, a) in sorted(wit.items())) + "]\n")

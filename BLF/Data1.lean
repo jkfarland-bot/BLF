@@ -18,6 +18,8 @@ def cons (k : ℕ) : List Quad := ((consTable.find? (·.1 == k)).map (·.2)).get
 
 def order : List ℕ := []
 
+def bnd (k : ℕ) : ℕ := (List.range 1).countP (fun i => k.testBit i) - 1
+
 def wits : List Wit := [([false, false], 0, 0, [0])]
 
 end N1

@@ -35,7 +35,7 @@ lemma floor_par (d A B C D : ℤ) (hd : 0 < d) (h : A + B = C + D) :
   have h3 := Int.emod_lt_of_pos C hd
   have h4 := Int.emod_lt_of_pos D hd
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have : d * (C / d + D / d + 2) ≤ d * (A / d + B / d) :=
     mul_le_mul_of_nonneg_left (by omega) hd.le
   nlinarith

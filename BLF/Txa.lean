@@ -106,9 +106,10 @@ lemma coverB_sound : ∀ (ls : List (List Bool)) (ts : List TW) (ss : List SP),
 
 /-- Classification from witnesses. -/
 theorem classify (n : ℕ) (allQ : List Quad) (cons : ℕ → List Quad) (order : List ℕ)
-    (wits : List Wit) (masks : List ℕ)
-    (h_check : search cons (fun _ => n) (fun g => masks.contains (bitsVal (parList (2 ^ n) g)))
+    (wits : List Wit) (bnd : ℕ → ℕ) (masks : List ℕ)
+    (h_check : search cons bnd (fun g => masks.contains (bitsVal (parList (2 ^ n) g)))
       order (fun _ => 0) = true)
+    (h_bnd : ∀ k ∈ order, (univ.filter fun i : Fin n => vtx n k i = true).card = bnd k + 1)
     (h_masks : masks = wits.map (fun w => bitsVal w.1))
     (h_len : wits.all (fun w => w.1.length == 2 ^ n) = true)
     (h_wf : wfB cons order = true)
@@ -125,7 +126,7 @@ theorem classify (n : ℕ) (allQ : List Quad) (cons : ℕ → List Quad) (order 
     ∀ f : (Fin n → Bool) → Bool,
       IsBLF f ↔ IsTXA f ∨ ∃ (c : Bool) (b : Fin n → Bool), ∀ x, f x = xor (g x) (affB c b x) := by
   intro f
-  have hS := (small_count n allQ cons order wits masks h_check h_masks h_len h_wf h_cons h_rel
+  have hS := (small_count n allQ cons order wits bnd masks h_check h_bnd h_masks h_len h_wf h_cons h_rel
     h_fixed h_vtx h_wit h_canon).1
   constructor
   · intro hf

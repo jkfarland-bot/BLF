@@ -42,7 +42,7 @@ lemma abs_Gof_le {n : ℕ} (j : ℕ) (K : ℤ) (a : Fin n → ℤ) :
   | succ m ih =>
     intro x hx
     obtain ⟨i, hi⟩ : ∃ i, x i = true := by
-      by_contra h; push_neg at h
+      by_contra h; push Not at h
       have : (univ.filter fun i => x i = true) = ∅ := by
         rw [Finset.filter_eq_empty_iff]; intro i _; simp [h i]
       rw [this] at hx; simp at hx
@@ -70,6 +70,46 @@ lemma abs_Gof_le_n {n : ℕ} (j : ℕ) (K : ℤ) (a : Fin n → ℤ) (x : Fin n 
     have := Finset.card_filter_le (univ : Finset (Fin n)) (fun i => x i = true)
     simp at this; exact_mod_cast this
   linarith
+
+/-- Sharper bound: `|Gof x| ≤ m` when `x` has `m + 1` true coordinates. -/
+lemma abs_Gof_le_pred {n : ℕ} (j : ℕ) (K : ℤ) (a : Fin n → ℤ) :
+    ∀ (m : ℕ) (x : Fin n → Bool), (univ.filter fun i => x i = true).card = m + 1 →
+      |Gof j K a x| ≤ m := by
+  intro m
+  induction m with
+  | zero =>
+    intro x hx
+    obtain ⟨i, hi⟩ := Finset.card_eq_one.mp hx
+    have : x = ve i := by
+      funext k
+      have hk := congrArg (k ∈ ·) hi
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton] at hk
+      simp only [ve]
+      cases hxk : x k <;> simp_all
+    subst this; simp [Gof_ve]
+  | succ m ih =>
+    intro x hx
+    obtain ⟨i, hi⟩ : ∃ i, x i = true := by
+      by_contra h; push Not at h
+      have : (univ.filter fun i => x i = true) = ∅ := by
+        rw [Finset.filter_eq_empty_iff]; intro i _; simp [h i]
+      rw [this] at hx; simp at hx
+    set x' := Function.update x i false with hx'
+    have hc : (univ.filter fun k => x' k = true).card = m + 1 := by
+      have : (univ.filter fun k => x' k = true) = (univ.filter fun k => x k = true).erase i := by
+        ext k; by_cases hk : k = i
+        · subst hk; simp [hx']
+        · simp [hx', hk]
+      rw [this, Finset.card_erase_of_mem (by simp [hi]), hx]; simp
+    have hrel : Rel x v0 x' (ve i) := by
+      intro k; by_cases hk : k = i
+      · subst hk; simp [hx', hi, v0, ve, bval]
+      · simp [hx', v0, ve, hk, bval]
+    have hp := Gof_par j K a x v0 x' (ve i) hrel
+    rw [Gof_v0, Gof_ve] at hp
+    have := ih x' hc
+    rw [abs_le] at hp this ⊢
+    push_cast; constructor <;> linarith
 
 /-- Truth table of the parities of `g` on codes `0, ..., N-1`. -/
 def parList (N : ℕ) (g : ℕ → ℤ) : List Bool := (List.range N).map fun k => decide (g k % 2 = 1)
@@ -102,10 +142,11 @@ def canonOk (n : ℕ) (l : List Bool) : Bool :=
 
 /-- Exact characterization and count from finite data checked by computation. -/
 theorem small_count (n : ℕ) (allQ : List Quad) (cons : ℕ → List Quad) (order : List ℕ)
-    (wits : List Wit)
+    (wits : List Wit) (bnd : ℕ → ℕ)
     (masks : List ℕ)
-    (h_check : search cons (fun _ => n) (fun g => masks.contains (bitsVal (parList (2 ^ n) g)))
+    (h_check : search cons bnd (fun g => masks.contains (bitsVal (parList (2 ^ n) g)))
       order (fun _ => 0) = true)
+    (h_bnd : ∀ k ∈ order, (univ.filter fun i : Fin n => vtx n k i = true).card = bnd k + 1)
     (h_masks : masks = wits.map (fun w => bitsVal w.1))
     (h_len : wits.all (fun w => w.1.length == 2 ^ n) = true)
     (h_wf : wfB cons order = true)
@@ -127,21 +168,21 @@ theorem small_count (n : ℕ) (allQ : List Quad) (cons : ℕ → List Quad) (ord
     constructor
     · rintro ⟨j, K, a, hf⟩
       set G' : ℕ → ℤ := fun k => if k < 2 ^ n then Gof j K a (vtx n k) else 0 with hG'
-      have hleaf := search_sound cons (fun _ => n)
+      have hleaf := search_sound cons bnd
         (fun g => masks.contains (bitsVal (parList (2 ^ n) g))) order (fun _ => 0) G' h_check h_wf
         (by
           intro m hm
           by_cases hlt : m < 2 ^ n
-          · simp only [hG', hlt, if_true]
+          · simp only [hG', hlt, ite_true]
             rcases h_fixed m hlt hm with h | ⟨i, h⟩
             · rw [h, Gof_v0]
             · rw [h, Gof_ve]
           · simp [hG', hlt])
         (by
-          intro k _
+          intro k hk
           simp only [hG']
           split_ifs
-          · exact abs_Gof_le_n j K a _
+          · exact abs_Gof_le_pred j K a _ _ (h_bnd k hk)
           · simp)
         (by
           intro k hk
@@ -152,7 +193,7 @@ theorem small_count (n : ℕ) (allQ : List Quad) (cons : ℕ → List Quad) (ord
           have hqA : q ∈ allQ := by simpa using hk' q hq
           obtain ⟨l1, l2, l3, l4, hr⟩ := h_rel q hqA
           apply okQ_of_abs
-          simp only [hG', l1, l2, l3, l4, if_true]
+          simp only [hG', l1, l2, l3, l4, ite_true]
           exact Gof_par j K a _ _ _ _ hr)
       have hmem : parList (2 ^ n) G' ∈ wits.map (·.1) := by
         rw [h_masks] at hleaf
@@ -169,7 +210,7 @@ theorem small_count (n : ℕ) (allQ : List Quad) (cons : ℕ → List Quad) (ord
         obtain ⟨hv, hlt⟩ := h_vtx x
         simp only [ofList, parList]
         rw [List.getD_eq_getElem?_getD, List.getElem?_map, List.getElem?_range hlt]
-        simp only [Option.map_some, Option.getD_some, hG', hlt, if_true, hv]
+        simp only [Option.map_some, Option.getD_some, hG', hlt, ite_true, hv]
         rw [Bool.eq_iff_iff, decide_eq_true_iff, decide_eq_true_iff, odd_iff_par]
       rw [hcf, hSdef, List.mem_toFinset]
       exact List.mem_map.mpr ⟨_, hmem, rfl⟩

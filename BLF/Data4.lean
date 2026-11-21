@@ -28,6 +28,8 @@ def cons (k : ℕ) : List Quad := ((consTable.find? (·.1 == k)).map (·.2)).get
 
 def order : List ℕ := [3, 5, 6, 9, 10, 12, 7, 11, 13, 14, 15]
 
+def bnd (k : ℕ) : ℕ := (List.range 4).countP (fun i => k.testBit i) - 1
+
 def wits : List Wit := [([false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], 0, 0, [0, 0, 0, 0]),
   ([false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true], 2, 0, [1, 1, 1, 1]),
   ([false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false], 2, 2, [1, 7, 7, 7]),
