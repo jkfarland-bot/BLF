@@ -1,0 +1,88 @@
+import BLF
+import Solution
+
+open BLF Finset
+
+namespace V2
+
+def vt (k : ℕ) : Fin 4 → Bool := fun i => k.testBit i.val
+
+def g4 (x : Fin 4 → Bool) : Bool := bitAt 1 (∑ i, bval (x i))
+
+def L : List (ℕ × ℕ × ℕ × ℕ) :=
+  [(0, 7, 1, 6), (1, 6, 0, 7), (2, 5, 3, 4), (3, 4, 2, 5), (8, 15, 9, 14), (9, 14, 8, 15),
+   (10, 13, 11, 12), (11, 12, 10, 13)]
+
+/-- g4 is bit 1 of the Hamming weight: true exactly on weights 2 and 3. -/
+theorem g4_table : ∀ k < 16, g4 (vt k) = (decide (2 ≤ k % 2 + k / 2 % 2 + k / 4 % 2 + k / 8 % 2 ∧ k % 2 + k / 2 % 2 + k / 4 % 2 + k / 8 % 2 ≤ 3)) := by
+  decide +kernel
+
+theorem rel_check : ∀ q ∈ L, ∀ i : Fin 4,
+    bval (vt q.1 i) + bval (vt q.2.1 i) = bval (vt q.2.2.1 i) + bval (vt q.2.2.2 i) := by
+  decide +kernel
+
+theorem fin_check : ∀ c : Bool, ∀ b : Fin 4 → Bool, (L.any fun q =>
+    xor (g4 (vt q.1)) (affB c b (vt q.1)) && xor (g4 (vt q.2.1)) (affB c b (vt q.2.1)) &&
+    !(xor (g4 (vt q.2.2.1)) (affB c b (vt q.2.2.1))) &&
+    !(xor (g4 (vt q.2.2.2)) (affB c b (vt q.2.2.2)))) = true := by
+  decide +kernel
+
+/-- A threshold function never takes the value pattern 1,1,0,0 on a parallelogram x+y = z+u. -/
+theorem thr_no_square (w0 : ℤ) (w : Fin 4 → ℤ) (x y z u : Fin 4 → Bool)
+    (h : ∀ i, bval (x i) + bval (y i) = bval (z i) + bval (u i))
+    (hx : 0 < w0 + ∑ i, w i * bval (x i)) (hy : 0 < w0 + ∑ i, w i * bval (y i))
+    (hz : ¬ 0 < w0 + ∑ i, w i * bval (z i)) (hu : ¬ 0 < w0 + ∑ i, w i * bval (u i)) : False := by
+  have e : (∑ i, w i * bval (x i)) + ∑ i, w i * bval (y i) =
+      (∑ i, w i * bval (z i)) + ∑ i, w i * bval (u i) := by
+    rw [← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [← mul_add, ← mul_add, h i]
+  omega
+
+/-- Bit 1 of x1+x2+x3+x4 is not threshold XOR affine: the right disjunct of blf_four_iff is needed. -/
+theorem g4_not_txa : ¬ IsTXA g4 := by
+  rintro ⟨w0, w, c, b, hf⟩
+  have key : ∀ p, decide (0 < w0 + ∑ i, w i * bval (p i)) = xor (g4 p) (affB c b p) := by
+    intro p; rw [hf p]; simp
+  obtain ⟨q, hqL, hq⟩ := List.any_eq_true.mp (fin_check c b)
+  simp only [Bool.and_eq_true, Bool.not_eq_true'] at hq
+  obtain ⟨⟨⟨h1, h2⟩, h3⟩, h4⟩ := hq
+  rw [← key] at h1 h2 h3 h4
+  exact thr_no_square w0 w _ _ _ _ (rel_check q hqL) (of_decide_eq_true h1)
+    (of_decide_eq_true h2) (of_decide_eq_false h3) (of_decide_eq_false h4)
+
+/-- Via blf_four_iff (right disjunct with the zero affine function), bit 1 of the sum is BLF. -/
+theorem g4_isBLF : IsBLF g4 :=
+  (blf_four_iff g4).2 (Or.inr ⟨false, fun _ => false, fun x => by simp [g4, affB, bval]⟩)
+
+/-- So the right disjunct of blf_four_iff is satisfied by a function outside the left one. -/
+theorem right_disjunct_needed : ∃ f : (Fin 4 → Bool) → Bool, IsBLF f ∧ ¬ IsTXA f :=
+  ⟨g4, g4_isBLF, g4_not_txa⟩
+
+/-- Consequence of the n = 3 theorem: TXA is not everything (some 3-variable function is not TXA). -/
+theorem not_all_txa3 : ∃ f : (Fin 3 → Bool) → Bool, ¬ IsTXA f := by
+  by_contra h
+  push Not at h
+  have : ∀ f : (Fin 3 → Bool) → Bool, IsBLF f := fun f =>
+    (blf_three_iff_threshold_xor_affine f).2 (h f)
+  have hc := blf_count_three
+  have e : Nat.card {f : (Fin 3 → Bool) → Bool // IsBLF f} = Nat.card ((Fin 3 → Bool) → Bool) :=
+    Nat.card_congr (Equiv.subtypeUnivEquiv this)
+  rw [e, Nat.card_eq_fintype_card] at hc
+  simp at hc
+
+/-- Left disjunct, concrete: majority of x1, x2, x3 (ignoring x4) XOR parity of all four is BLF. -/
+theorem maj_xor_parity_isBLF : IsBLF (fun x : Fin 4 → Bool =>
+    xor (decide (0 < -1 + ∑ i, (![1, 1, 1, 0] : Fin 4 → ℤ) i * bval (x i)))
+      (affB false (fun _ => true) x)) :=
+  (blf_four_iff _).2 (Or.inl ⟨-1, ![1, 1, 1, 0], false, fun _ => true, fun _ => rfl⟩)
+
+/-- n = 3 iff applied: 3-variable parity is TXA (zero threshold), hence BLF. -/
+theorem parity3_isBLF : IsBLF (fun x : Fin 3 → Bool => affB false (fun _ => true) x) :=
+  (blf_three_iff_threshold_xor_affine _).2 ⟨0, fun _ => 0, false, fun _ => true, fun x => by simp⟩
+
+end V2
+
+#print axioms V2.right_disjunct_needed
+#print axioms V2.not_all_txa3
+

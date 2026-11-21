@@ -14,3 +14,4 @@ public import BLF.Small3
 public import BLF.Small4
 public import BLF.Txa3
 public import BLF.Txa4
+public import BLF.Strict

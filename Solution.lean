@@ -65,4 +65,11 @@ theorem blf_four_iff (f : (Fin 4 → Bool) → Bool) :
       ∃ (c : Bool) (b : Fin 4 → Bool), ∀ x, f x = xor (bitAt 1 (∑ i, bval (x i))) (affB c b x) :=
   blf_four_iff' f
 
+/-- The boundary at four variables is strict: bit 1 of `x_1 + x_2 + x_3 + x_4` is BLF but not a
+threshold function XOR an affine function. -/
+theorem bitOneSum_isBLF_not_txa :
+    IsBLF (fun x : Fin 4 → Bool => bitAt 1 (∑ i, bval (x i))) ∧
+      ¬ IsTXA (fun x : Fin 4 → Bool => bitAt 1 (∑ i, bval (x i))) :=
+  ⟨bitOneSum_isBLF, bitOneSum_not_txa'⟩
+
 end BLF

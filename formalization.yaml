@@ -11,7 +11,7 @@ project:
     it proves the exact counts |BLF(n)| = 4, 16, 208 and 10368 for n = 1, 2, 3 and 4 by a verified
     pruned search checked by the kernel, that BLF(3) is exactly the threshold functions XOR
     GF(2)-affine functions, and that BLF(4) adds exactly the affine translates of bit 1 of
-    x1 + x2 + x3 + x4.
+    x1 + x2 + x3 + x4, which is not itself threshold XOR affine.
   authors:
     - "Joseph S. Farland"
   license: "Apache-2.0"
@@ -55,8 +55,7 @@ status:
     closure of BLF under XOR with GF(2)-affine functions (every n), and the exact counts
     |BLF(n)| for n = 1, 2, 3, 4, the equality BLF(3) = threshold XOR affine and the description of
     BLF(4) as threshold XOR affine together with the translates of bit 1 of x1 + x2 + x3 + x4.
-    Not formalized (computer-certified in the preprint): that the extra class at n = 4 is not
-    itself threshold XOR affine. Not formalized, and labeled in the preprint as computer-certified
+    It also proves that this function is not threshold XOR affine. Not formalized, and labeled in the preprint as computer-certified
     or as paper proofs: the characterization by floor(u) mod 2 for real affine u, the identity
     |BLF(n)| = 2^n (R_n + 1) with the toric chamber count R_n, the counts for n = 5 and 6, the
     asymptotics, the anti-Hadamard second-order term, and the cellular-automaton results.
@@ -103,11 +102,16 @@ fidelity:
 review:
   status: "agent-reviewed"
   reviewers:
-    - "TEMPLATE: verifier seat names, after the independent Lean review"
+    - "Claude Opus agent seats (Anthropic) that did not write the code they checked: two independent Lean verifiers (review/lean1, review/lean2) and cold readers of the paper proofs (coldread/)"
   notes: >-
-    TEMPLATE: summary of the independent review (fresh rebuild, axiom collector, non-vacuity,
-    planted errors, statement audit against the preprint). No human referee has reviewed the
-    preprint or the formalization; the author is responsible for both.
+    Each verifier made a fresh copy and rebuilt it, checked source hygiene and the byte identity
+    of the definitions, ran an axiom collector over every theorem in the BLF namespace (only
+    propext, Classical.choice and Quot.sound), audited each statement in Challenge.lean, proved
+    non-vacuity instances, recounted with its own code, planted errors that the build rejected,
+    and ran the toolchain's lake comparator (Lean kernel, nanoda and con-ron accept). The second
+    verifier also wrote the proof that bit 1 of x1 + x2 + x3 + x4 is not threshold XOR affine. No
+    human referee has reviewed the preprint or the formalization; the author is responsible for
+    both.
 
 alignment:
   namespace: "BLF"
@@ -142,5 +146,10 @@ alignment:
       module: "Challenge"
       status: "proved"
       note: "IsBLF f iff IsTXA f or f is bit 1 of x1 + x2 + x3 + x4 XOR an affine function."
+    - source: "TEMPLATE: paper numbering, the n = 4 boundary is strict"
+      lean: "BLF.bitOneSum_isBLF_not_txa"
+      module: "Challenge"
+      status: "proved"
+      note: "Bit 1 of x1 + x2 + x3 + x4 is BLF and not threshold XOR affine."
 
 acknowledgements: "Lean 4 and Mathlib; Claude (Anthropic) agent seats for the mathematics and the formalization; the Palomar starter template for the check scripts."

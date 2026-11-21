@@ -1,0 +1,8 @@
+import BLF
+open BLF
+-- control: the true bound statement holds
+example : ∀ k ∈ N4.order, (Finset.univ.filter fun i : Fin 4 => vtx 4 k i = true).card =
+    ((List.range 4).countP (fun i => k.testBit i) - 1) + 1 := by decide +kernel
+-- planted: a bound one smaller must be rejected
+example : ∀ k ∈ N4.order, (Finset.univ.filter fun i : Fin 4 => vtx 4 k i = true).card =
+    ((List.range 4).countP (fun i => k.testBit i) - 2) + 1 := by decide +kernel

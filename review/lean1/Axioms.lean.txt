@@ -1,0 +1,34 @@
+import BLF
+import Solution
+open Lean Elab Command
+
+run_cmd do
+  let env ← getEnv
+  let allowed : List Name := [``propext, ``Classical.choice, ``Quot.sound]
+  let mut names : Array Name := #[]
+  for (n, ci) in env.constants.toList do
+    if (`BLF).isPrefixOf n then
+      if let .thmInfo _ := ci then
+        names := names.push n
+  names := names.qsort (fun a b => a.toString < b.toString)
+  let mut bad : Nat := 0
+  let mut seen : Std.HashSet Name := {}
+  let mut ns : Std.HashMap String Nat := {}
+  for n in names do
+    let axs ← liftCoreM (Lean.collectAxioms n)
+    for a in axs do
+      seen := seen.insert a
+      if !(allowed.contains a) then
+        bad := bad + 1
+        logInfo m!"BAD {n} uses {a}"
+    let pre := (n.getPrefix).toString
+    ns := ns.insert pre ((ns.getD pre (0 : Nat)) + (1 : Nat))
+  logInfo m!"theorems checked: {names.size}; namespaces: {ns.toList}; axioms seen: {seen.toList}; bad: {bad}"
+
+#print axioms BLF.floor_parallelogram
+#print axioms BLF.threshold_isBLF
+#print axioms BLF.isBLF_xor_affB
+#print axioms BLF.blf_count_one
+#print axioms BLF.blf_count_two
+#print axioms BLF.blf_count_three
+#print axioms BLF.blf_count_four

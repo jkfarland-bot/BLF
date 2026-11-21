@@ -10,7 +10,8 @@
     "BLF.blf_count_three",
     "BLF.blf_count_four",
     "BLF.blf_three_iff_threshold_xor_affine",
-    "BLF.blf_four_iff"
+    "BLF.blf_four_iff",
+    "BLF.bitOneSum_isBLF_not_txa"
   ],
   "definition_names": [],
   "permitted_axioms": [

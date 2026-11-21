@@ -1,0 +1,2 @@
+import Challenge
+#print axioms BLF.blf_count_four

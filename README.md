@@ -26,9 +26,11 @@ lake build
 ```
 
 No `sorry` in the development, no `native_decide`, no new axioms: every declaration depends only on
-`propext`, `Classical.choice` and `Quot.sound` (`Challenge.lean` states the nine results with
-`sorry` by design; `Solution.lean` proves them). The n = 4 count takes a few minutes of kernel
-time.
+`propext`, `Classical.choice` and `Quot.sound` (`Challenge.lean` states the ten results with
+`sorry` by design; `Solution.lean` proves them). The n = 4 checks take a few minutes of kernel time. The full
+`scripts/verify-comparator.sh` run (Lean kernel, nanoda and con-ron) passes in a 6 GiB sandbox, with
+peaks of about 5 GB (leanexport), 4.6 GB (con-ron) and 4.1 GB (nanoda); run one build at a time on
+small machines. Two independent verification reports are in `review/`.
 
 ## What is proved in Lean
 
@@ -40,7 +42,8 @@ time.
 * **Structure for n = 3 and 4**: a function of three variables is BLF exactly when it is a
   threshold function XOR a GF(2)-affine function; for four variables the BLF functions are the
   threshold XOR affine functions together with the affine translates of bit 1 of
-  x1 + x2 + x3 + x4.
+  x1 + x2 + x3 + x4, and that function is not itself threshold XOR affine, so exactly 32 functions
+  of BLF(4) lie outside threshold XOR affine.
 
 The counts rest on a general theorem (`BLF.small_count`): BLF functions are exactly those whose
 canonical form (XOR with the affine function agreeing at 0 and the unit vectors) is in an explicit
@@ -51,9 +54,9 @@ the other is an explicit witness (j, K, a) for every element of S, also checked 
 ## Layout for the Palomar registry
 
 - `Challenge.lean`: the statement surface. It imports only Mathlib, defines `bval`, `lin`, `bitAt`,
-  `IsBLF`, `affB` and `IsTXA` with docstrings, and states the nine results with `sorry`.
+  `IsBLF`, `affB` and `IsTXA` with docstrings, and states the ten results with `sorry`.
 - `BLF/Defs.lean`: a byte-identical copy of the definitions block (checked in CI).
-- `Solution.lean`: proves the nine statements from the development in `BLF/`.
+- `Solution.lean`: proves the ten statements from the development in `BLF/`.
 - `comparator.json`: the theorem names; `definition_names` is empty, so Comparator checks every
   definition the statements use, body included.
 - `BLF/Data1.lean` to `BLF/Data4.lean`, `BLF/Check4.lean` and `BLF/TxaData3.lean`, `BLF/TxaData4.lean`
