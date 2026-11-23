@@ -1,0 +1,25 @@
+{
+  "upload_type": "software",
+  "title": "BLF: Lean 4 formalization and computations for Boolean functions that are one bit of a linear form",
+  "creators": [
+    {
+      "name": "Farland, Joseph S.",
+      "orcid": "0009-0007-6809-804X"
+    }
+  ],
+  "version": "1.0.0",
+  "publication_date": "2026-11-23",
+  "access_right": "open",
+  "license": "Apache-2.0",
+  "description": "<p>A Boolean function f of n variables is BLF if f(x) is bit j of K + a_1 x_1 + ... + a_n x_n for some integers K, a_i and some j. This repository contains a Lean 4 and Mathlib formalization and the programs behind the accompanying preprint. Proved in Lean, with standard axioms only (propext, Classical.choice, Quot.sound) and no sorry or native_decide: for every n, the floors of (K + a.x)/2^j satisfy every parallelogram inequality on the cube, every threshold function is BLF, and BLF is closed under XOR with GF(2)-affine functions; |BLF(n)| = 4, 16, 208, 10368 for n = 1, 2, 3, 4; BLF(3) is exactly the threshold functions XOR affine functions; BLF(4) consists of those together with the affine translates of bit 1 of x1 + x2 + x3 + x4, which is not threshold XOR affine. The finite results rest on a verified pruned search and witness data checked by the kernel. A Palomar statement file (Challenge.lean) with ten headline statements is checked against the proofs by lake comparator (Lean kernel, nanoda and con-ron). The C and Python programs in compute/ rebuild the counts |BLF(n)| = 2, 4, 16, 208, 10368, 1903808, 1359244544 (n = 0 to 6) and the toric chamber counts R_n = 1, 1, 3, 25, 647, 59493, 21238195 by three independent methods; proofs/ and coldread/ hold the paper proofs of the characterization and of the identity |BLF(n)| = 2^n (R_n + 1) with independent readers' reports; review/ holds two independent verifications of the Lean development.</p><p>AI assistance: this work was prepared with Claude (Anthropic), an AI model, which helped draft the text, develop and check the proofs, run the computations, and search the literature; several results came from ChatGPT (OpenAI) answers that Claude checked. The Lean code was written by Claude agents and checked by separate Claude agents that did not write it. The formalized statements are machine-checked in Lean 4; the rest is not. The author, Joseph S. Farland, chose the problems, directed the work, and is responsible for its content. No external human referee has reviewed this work.</p>",
+  "keywords": [
+    "Boolean functions",
+    "threshold functions",
+    "toric arrangements",
+    "broadword computing",
+    "cellular automata",
+    "Lean 4",
+    "formal verification"
+  ],
+  "notes": "Toolchain: Lean v4.35.0-rc2, Mathlib v4.35.0-rc2 (rev 065356127b1dc0016f66b7283ce0ce2c4055aa55). Build: lake exe cache get && lake build (the n = 4 kernel checks take a few minutes; about 3 GB of memory). Palomar checks: python3 scripts/check-lean-sources.py; ruby scripts/validate-formalization.rb; ./scripts/verify-comparator.sh (needs bubblewrap; passes in 6 GiB)."
+}
