@@ -15,3 +15,8 @@ public import BLF.Small4
 public import BLF.Txa3
 public import BLF.Txa4
 public import BLF.Strict
+public import BLF.Char
+public import BLF.Selector
+public import BLF.Gated
+public import BLF.Square
+public import BLF.Rule110

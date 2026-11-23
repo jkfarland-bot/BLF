@@ -11,7 +11,13 @@
     "BLF.blf_count_four",
     "BLF.blf_three_iff_threshold_xor_affine",
     "BLF.blf_four_iff",
-    "BLF.bitOneSum_isBLF_not_txa"
+    "BLF.bitOneSum_isBLF_not_txa",
+    "BLF.isBLF_iff_floor",
+    "BLF.selector_iff",
+    "BLF.gated_threshold_bit_four",
+    "BLF.blf_five_needs_bit_four",
+    "BLF.rule110Two_not_isBLF",
+    "BLF.rule110Three_not_isBLF"
   ],
   "definition_names": [],
   "permitted_axioms": [

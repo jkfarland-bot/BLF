@@ -72,4 +72,44 @@ theorem bitOneSum_isBLF_not_txa :
       ¬ IsTXA (fun x : Fin 4 → Bool => bitAt 1 (∑ i, bval (x i))) :=
   ⟨bitOneSum_isBLF, bitOneSum_not_txa'⟩
 
+/-- Characterization (Proposition 2.1, all `n`): `f` is BLF iff `f x = ⌊t + r.x⌋ mod 2` for some real
+`t` and `r`. -/
+theorem isBLF_iff_floor {n : ℕ} (f : (Fin n → Bool) → Bool) :
+    IsBLF f ↔ ∃ (t : ℝ) (r : Fin n → ℝ),
+      ∀ x, f x = decide (⌊t + ∑ i, r i * (bval (x i) : ℝ)⌋ % 2 = 1) := by
+  exact isBLF_iff_floor' f
+
+/-- Selector lemma (Lemma 8.2, all `n` and `j`): `z ∧ T(x)` is bit `j` of an integer affine form in
+`(x, z)` iff `T(x) = [τ ≤ w.x]` for integer weights with `∑ |w_i| < 2^j`. -/
+theorem selector_iff {n : ℕ} (j : ℕ) (T : (Fin n → Bool) → Bool) :
+    (∃ (K c : ℤ) (a : Fin n → ℤ), ∀ x z, (z && T x) = bitAt j (lin K a x + c * bval z)) ↔
+      ∃ (w : Fin n → ℤ) (τ : ℤ), ∑ i, |w i| < 2 ^ j ∧
+        ∀ x, T x = decide (τ ≤ ∑ i, w i * bval (x i)) := by
+  exact selector_iff' j T
+
+/-- The gated threshold `z ∧ [x1 + 2 x2 + 2 x3 + 3 x4 ≥ 5]` (Section 8) is bit 4 of an integer
+affine form and not bit 3. -/
+theorem gated_threshold_bit_four :
+    (∃ (K c : ℤ) (a : Fin 4 → ℤ), ∀ x z,
+      (z && decide (5 ≤ bval (x 0) + 2 * bval (x 1) + 2 * bval (x 2) + 3 * bval (x 3)))
+        = bitAt 4 (lin K a x + c * bval z)) ∧
+    ¬ ∃ (K c : ℤ) (a : Fin 4 → ℤ), ∀ x z,
+      (z && decide (5 ≤ bval (x 0) + 2 * bval (x 1) + 2 * bval (x 2) + 3 * bval (x 3)))
+        = bitAt 3 (lin K a x + c * bval z) := by
+  exact ⟨tFC80_bit_four, tFC80_not_bit_three⟩
+
+/-- No bit position `j ≤ 3` serves every BLF function of five variables: `j*(5) ≥ 4`. -/
+theorem blf_five_needs_bit_four :
+    ∃ f : (Fin 5 → Bool) → Bool, IsBLF f ∧
+      ∀ j ≤ 3, ¬ ∃ (K : ℤ) (a : Fin 5 → ℤ), ∀ x, f x = bitAt j (lin K a x) := by
+  exact ⟨gFC80, gFC80_isBLF, gFC80_not_low_bit⟩
+
+/-- Two steps of Rule 110 are not BLF (Corollary 9.2). -/
+theorem rule110Two_not_isBLF : ¬ IsBLF rule110Two := by
+  exact rule110Two_not_isBLF'
+
+/-- Three steps of Rule 110 are not BLF (Corollary 9.2). -/
+theorem rule110Three_not_isBLF : ¬ IsBLF rule110Three := by
+  exact rule110Three_not_isBLF'
+
 end BLF

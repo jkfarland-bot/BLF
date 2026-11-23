@@ -39,5 +39,18 @@ def IsTXA {n : ℕ} (f : (Fin n → Bool) → Bool) : Prop :=
   ∃ (w0 : ℤ) (w : Fin n → ℤ) (c : Bool) (b : Fin n → Bool),
     ∀ x, f x = xor (decide (0 < w0 + ∑ i, w i * bval (x i))) (affB c b x)
 
+/-- Elementary cellular automaton rule `R` in Wolfram's numbering: the new value of a cell with left
+neighbour `l`, value `c` and right neighbour `r` is bit `4l + 2c + r` of `R`. -/
+def eca (R : ℕ) (l c r : Bool) : Bool := R.testBit (4 * l.toNat + 2 * c.toNat + r.toNat)
+
+/-- Two steps of Rule 110 as a function of a window of five cells, `x 0` leftmost. -/
+def rule110Two (x : Fin 5 → Bool) : Bool :=
+  eca 110 (eca 110 (x 0) (x 1) (x 2)) (eca 110 (x 1) (x 2) (x 3)) (eca 110 (x 2) (x 3) (x 4))
+
+/-- Three steps of Rule 110 as a function of a window of seven cells, `x 0` leftmost. -/
+def rule110Three (x : Fin 7 → Bool) : Bool :=
+  rule110Two ![eca 110 (x 0) (x 1) (x 2), eca 110 (x 1) (x 2) (x 3), eca 110 (x 2) (x 3) (x 4),
+    eca 110 (x 3) (x 4) (x 5), eca 110 (x 4) (x 5) (x 6)]
+
 end BLF
 -- END STATEMENT DEFINITIONS

@@ -56,6 +56,19 @@ def IsTXA {n : ℕ} (f : (Fin n → Bool) → Bool) : Prop :=
   ∃ (w0 : ℤ) (w : Fin n → ℤ) (c : Bool) (b : Fin n → Bool),
     ∀ x, f x = xor (decide (0 < w0 + ∑ i, w i * bval (x i))) (affB c b x)
 
+/-- Elementary cellular automaton rule `R` in Wolfram's numbering: the new value of a cell with left
+neighbour `l`, value `c` and right neighbour `r` is bit `4l + 2c + r` of `R`. -/
+def eca (R : ℕ) (l c r : Bool) : Bool := R.testBit (4 * l.toNat + 2 * c.toNat + r.toNat)
+
+/-- Two steps of Rule 110 as a function of a window of five cells, `x 0` leftmost. -/
+def rule110Two (x : Fin 5 → Bool) : Bool :=
+  eca 110 (eca 110 (x 0) (x 1) (x 2)) (eca 110 (x 1) (x 2) (x 3)) (eca 110 (x 2) (x 3) (x 4))
+
+/-- Three steps of Rule 110 as a function of a window of seven cells, `x 0` leftmost. -/
+def rule110Three (x : Fin 7 → Bool) : Bool :=
+  rule110Two ![eca 110 (x 0) (x 1) (x 2), eca 110 (x 1) (x 2) (x 3), eca 110 (x 2) (x 3) (x 4),
+    eca 110 (x 3) (x 4) (x 5), eca 110 (x 4) (x 5) (x 6)]
+
 end BLF
 -- END STATEMENT DEFINITIONS
 
@@ -114,6 +127,46 @@ threshold function XOR an affine function. -/
 theorem bitOneSum_isBLF_not_txa :
     IsBLF (fun x : Fin 4 → Bool => bitAt 1 (∑ i, bval (x i))) ∧
       ¬ IsTXA (fun x : Fin 4 → Bool => bitAt 1 (∑ i, bval (x i))) := by
+  sorry
+
+/-- Characterization (Proposition 2.1, all `n`): `f` is BLF iff `f x = ⌊t + r.x⌋ mod 2` for some real
+`t` and `r`. -/
+theorem isBLF_iff_floor {n : ℕ} (f : (Fin n → Bool) → Bool) :
+    IsBLF f ↔ ∃ (t : ℝ) (r : Fin n → ℝ),
+      ∀ x, f x = decide (⌊t + ∑ i, r i * (bval (x i) : ℝ)⌋ % 2 = 1) := by
+  sorry
+
+/-- Selector lemma (Lemma 8.2, all `n` and `j`): `z ∧ T(x)` is bit `j` of an integer affine form in
+`(x, z)` iff `T(x) = [τ ≤ w.x]` for integer weights with `∑ |w_i| < 2^j`. -/
+theorem selector_iff {n : ℕ} (j : ℕ) (T : (Fin n → Bool) → Bool) :
+    (∃ (K c : ℤ) (a : Fin n → ℤ), ∀ x z, (z && T x) = bitAt j (lin K a x + c * bval z)) ↔
+      ∃ (w : Fin n → ℤ) (τ : ℤ), ∑ i, |w i| < 2 ^ j ∧
+        ∀ x, T x = decide (τ ≤ ∑ i, w i * bval (x i)) := by
+  sorry
+
+/-- The gated threshold `z ∧ [x1 + 2 x2 + 2 x3 + 3 x4 ≥ 5]` (Section 8) is bit 4 of an integer
+affine form and not bit 3. -/
+theorem gated_threshold_bit_four :
+    (∃ (K c : ℤ) (a : Fin 4 → ℤ), ∀ x z,
+      (z && decide (5 ≤ bval (x 0) + 2 * bval (x 1) + 2 * bval (x 2) + 3 * bval (x 3)))
+        = bitAt 4 (lin K a x + c * bval z)) ∧
+    ¬ ∃ (K c : ℤ) (a : Fin 4 → ℤ), ∀ x z,
+      (z && decide (5 ≤ bval (x 0) + 2 * bval (x 1) + 2 * bval (x 2) + 3 * bval (x 3)))
+        = bitAt 3 (lin K a x + c * bval z) := by
+  sorry
+
+/-- No bit position `j ≤ 3` serves every BLF function of five variables: `j*(5) ≥ 4`. -/
+theorem blf_five_needs_bit_four :
+    ∃ f : (Fin 5 → Bool) → Bool, IsBLF f ∧
+      ∀ j ≤ 3, ¬ ∃ (K : ℤ) (a : Fin 5 → ℤ), ∀ x, f x = bitAt j (lin K a x) := by
+  sorry
+
+/-- Two steps of Rule 110 are not BLF (Corollary 9.2). -/
+theorem rule110Two_not_isBLF : ¬ IsBLF rule110Two := by
+  sorry
+
+/-- Three steps of Rule 110 are not BLF (Corollary 9.2). -/
+theorem rule110Three_not_isBLF : ¬ IsBLF rule110Three := by
   sorry
 
 end BLF
