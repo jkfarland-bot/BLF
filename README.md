@@ -30,7 +30,20 @@ No `sorry` in the development, no `native_decide`, no new axioms: every declarat
 `sorry` by design; `Solution.lean` proves them). The n = 4 checks take a few minutes of kernel time. The full
 `scripts/verify-comparator.sh` run (Lean kernel, nanoda and con-ron) passes in a 6 GiB sandbox, with
 peaks of about 5 GB (leanexport), 4.6 GB (con-ron) and 4.1 GB (nanoda); run one build at a time on
-small machines. Two independent verification reports are in `review/`.
+small machines.
+
+**Review.** `review/` holds two independent verification reports by Claude agents that did not write
+the code, each on an earlier commit: `review/lean1` audited commit `cb688a7` (seven statements:
+`floor_parallelogram`, `threshold_isBLF`, `isBLF_xor_affB`, `blf_count_one` to `blf_count_four`;
+its comparator run was partial, as nanoda ran out of memory in a 6 GiB sandbox), and `review/lean2`
+audited commit `3e2e68f` (those seven, unchanged, plus `blf_three_iff_threshold_xor_affine` and
+`blf_four_iff`; the comparator accepted all nine with all three kernels). The tenth statement,
+`bitOneSum_isBLF_not_txa`, was added at commit `9e48384` after both reports, with a proof
+(`BLF/Strict.lean`) written by the second verifier after its report; no independent report audits it.
+The Lean sources have not changed since `9e48384`. The current ten-theorem submission is verified
+mechanically, not by an independent audit: the CI run on each push builds the project and runs the
+toolchain's lake comparator, which accepts all ten theorems with the Lean kernel, nanoda and con-ron
+and only the standard axioms. See `review/README.md`.
 
 ## What is proved in Lean
 
