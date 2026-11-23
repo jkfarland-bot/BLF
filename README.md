@@ -1,7 +1,7 @@
 # BLF: Boolean functions that are one bit of a linear form
 
-Lean 4 / Mathlib formalization and computations accompanying Joseph S. Farland, *(title of the
-BLF preprint, to be added with its DOI)*. A Boolean function f of n variables is **BLF** if
+Lean 4 / Mathlib formalization and computations accompanying Joseph S. Farland, *Boolean functions that are one bit of a linear form: a toric identity, exact counts and
+asymptotics* (preprint, Zenodo, DOI to be added). A Boolean function f of n variables is **BLF** if
 
     f(x) = bit j of (K + a_1 x_1 + ... + a_n x_n)
 

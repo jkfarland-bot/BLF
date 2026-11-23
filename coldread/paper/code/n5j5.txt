@@ -1,0 +1,5 @@
+n=5 j=5 classes=29747
+
+real	5m40.027s
+user	5m32.885s
+sys	0m0.084s

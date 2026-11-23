@@ -44,3 +44,6 @@ Lean (v4.35.0-rc2, Mathlib), kernel-checked, axioms propext, Classical.choice, Q
   BLF.card_blf_three : Nat.card {f : (Fin 3 -> Bool) -> Bool // IsBLF f} = 208
   BLF.card_blf_four  : Nat.card {f : (Fin 4 -> Bool) -> Bool // IsBLF f} = 10368   (Small4 kernel check about 5 min)
   general n: flo_par (parallelogram lemma), IsBLF.xor_aff, card_of_canon, canon_eq_Gof, search_sound, small_count
+
+grid n 2^(n-2) (bit n-2): classes 1, 5, 164, 22,067 (n = 2..5); grid n 2^(n-1) (bit n-1): 2, 13, 324, 29,747
+  (n = 2..5) = all classes; n = 6: bit 4 9,449,818, bit 5 10,619,098 (orbits.c). So j*(n) = n - 1 for 1 <= n <= 6.
