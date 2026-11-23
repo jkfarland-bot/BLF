@@ -26,7 +26,7 @@ lake build
 ```
 
 No `sorry` in the development, no `native_decide`, no new axioms: every declaration depends only on
-`propext`, `Classical.choice` and `Quot.sound` (`Challenge.lean` states the ten results with
+`propext`, `Classical.choice` and `Quot.sound` (`Challenge.lean` states the sixteen results with
 `sorry` by design; `Solution.lean` proves them). The n = 4 checks take a few minutes of kernel time. The full
 `scripts/verify-comparator.sh` run (Lean kernel, nanoda and con-ron) passes in a 6 GiB sandbox, with
 peaks of about 5 GB (leanexport), 4.6 GB (con-ron) and 4.1 GB (nanoda); run one build at a time on
@@ -47,6 +47,7 @@ and only the standard axioms. See `review/README.md`.
 
 ## What is proved in Lean
 
+* **Characterization** (every n): f is BLF iff f(x) = floor(t + r.x) mod 2 for some real t and r.
 * **Parallelogram inequality** (every n): for all j, K, a and cube vertices with x + y = z + w,
   the floors F(x) = (K + a.x) / 2^j satisfy |F(x) + F(y) - F(z) - F(w)| <= 1.
 * **Threshold functions are BLF** (every n), and **BLF is closed under XOR with GF(2)-affine
@@ -57,6 +58,12 @@ and only the standard axioms. See `review/README.md`.
   threshold XOR affine functions together with the affine translates of bit 1 of
   x1 + x2 + x3 + x4, and that function is not itself threshold XOR affine, so exactly 32 functions
   of BLF(4) lie outside threshold XOR affine.
+* **Selector lemma** (every n and j): z AND T(x) is bit j of an integer affine form in (x, z) iff
+  T(x) = [tau <= w.x] with integer weights and sum |w_i| < 2^j. Example: z AND
+  [x1 + 2x2 + 2x3 + 3x4 >= 5] is bit 4 and not bit 3, so no bit position j <= 3 serves every BLF
+  function of five variables (j*(5) >= 4).
+* **Rule 110** (through a square identity for every BLF function): two steps and three steps of
+  Rule 110, as functions of their windows of 5 and 7 cells, are not BLF.
 
 The counts rest on a general theorem (`BLF.small_count`): BLF functions are exactly those whose
 canonical form (XOR with the affine function agreeing at 0 and the unit vectors) is in an explicit
@@ -67,9 +74,10 @@ the other is an explicit witness (j, K, a) for every element of S, also checked 
 ## Layout for the Palomar registry
 
 - `Challenge.lean`: the statement surface. It imports only Mathlib, defines `bval`, `lin`, `bitAt`,
-  `IsBLF`, `affB` and `IsTXA` with docstrings, and states the ten results with `sorry`.
+  `IsBLF`, `affB`, `IsTXA`, `eca`, `rule110Two` and `rule110Three` with docstrings, and states the
+  sixteen results with `sorry`.
 - `BLF/Defs.lean`: a byte-identical copy of the definitions block (checked in CI).
-- `Solution.lean`: proves the ten statements from the development in `BLF/`.
+- `Solution.lean`: proves the sixteen statements from the development in `BLF/`.
 - `comparator.json`: the theorem names; `definition_names` is empty, so Comparator checks every
   definition the statements use, body included.
 - `BLF/Data1.lean` to `BLF/Data4.lean`, `BLF/Check4.lean` and `BLF/TxaData3.lean`, `BLF/TxaData4.lean`

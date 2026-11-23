@@ -1,0 +1,84 @@
+== blf_small.py (BLF(3), elementary rules, Corollary 5.3 cross-check)
+n=3, j<=2: 208 distinct BLF functions found
+n=3, j<=3: 208 distinct BLF functions found
+non-BLF elementary rules: 48
+classes: 88  non-BLF classes: 15 [6, 9, 18, 27, 29, 33, 40, 46, 58, 72, 78, 130, 132, 172, 184]  mixed: []
+Rule 110 BLF: True (2, 1, (1, 3, 3))
+== thm95.py thm 8 (Theorem 9.5, all 256 rules, k=1,2,3, N<=8)
+k=1: all 256 rules OK up to N=8; elapsed 0.6s
+k=2: all 256 rules OK up to N=8; elapsed 2.2s
+k=3: all 256 rules OK up to N=8; elapsed 8.0s
+rows checked: 391680 (expected 391680 )
+  k=1 N=1: L=2 pi=6 b=17 P=3 (blocks for rule 255: 9) M bits=1174
+  k=1 N=2: L=2 pi=6 b=17 P=2 (blocks for rule 255: 9) M bits=1446
+  k=1 N=8: L=2 pi=6 b=17 P=2 (blocks for rule 255: 9) M bits=4642
+  k=2 N=1: L=3 pi=7 b=20 P=5 (blocks for rule 255: 33) M bits=7861
+  k=2 N=2: L=3 pi=7 b=20 P=3 (blocks for rule 255: 33) M bits=9161
+  k=2 N=8: L=3 pi=7 b=20 P=2 (blocks for rule 255: 33) M bits=20841
+  k=3 N=1: L=3 pi=8 b=22 P=7 (blocks for rule 255: 129) M bits=45343
+  k=3 N=2: L=3 pi=8 b=22 P=4 (blocks for rule 255: 129) M bits=50975
+  k=3 N=8: L=3 pi=8 b=22 P=2 (blocks for rule 255: 129) M bits=90531
+== thm95.py thm 10 (same, N<=10)
+k=1: all 256 rules OK up to N=10; elapsed 3.1s
+k=2: all 256 rules OK up to N=10; elapsed 11.2s
+k=3: all 256 rules OK up to N=10; elapsed 39.8s
+rows checked: 1571328 (expected 1571328 )
+== thm95.py prop 8 (Proposition 9.4, 208 BLF rules, k=1, N<=8)
+BLF elementary rules: 208
+Prop 9.4 forward: OK on 424320 (rule, representation, row) cases, N <= 8; max slot / 2^(2pi+ell+2) = 0.4632; 2.2s
+== thm95.py big 12 (Rule 110, k=2 and 3, rows of 256 cells)
+Rule 110, k=2, N=256: L=3 pi=7 b=20 P=2 blocks=18 bits: M=358441 A=358421 D=5120
+  12 rows OK (0.1s)
+Rule 110, k=3, N=256: L=3 pi=8 b=22 P=2 blocks=67 bits: M=1498179 A=1498157 D=5632
+  12 rows OK (0.4s)
+== general_tables.py (Theorem 9.5, random tables, r=1..5, offsets)
+general tables: OK on 50800 rows (r = 1..5, 40 random tables each, random o in [-3, r+9], N <= 7); 0.4s
+== cor93.py (Corollary 9.3)
+k=2: windows 00000..00011 -> values [0, 1, 1, 1]
+k=2: windows 01000..01011 -> values [0, 1, 0, 0]
+k=3: windows 0000000..0000011 -> values [0, 1, 1, 1]
+k=3: windows 0010000..0010011 -> values [0, 1, 0, 0]
+square identity checked on 149792 cases: OK
+r=5: least N with floor(N/r) >= 2r+3 is 65 (claimed 65); 256 ok: True
+r=7: least N with floor(N/r) >= 2r+3 is 119 (claimed 119); 256 ok: True
+== lemma91.py (Lemma 9.1 construction)
+Lemma 9.1 construction: 8640 instances OK (r = 1..5, N from r(2r+3)); case counts {'case1': 1546, 'case2': 7094, 'literal_exchange_fails': 399}; 2.4s
+  counting step tight at m = 2r+2 (r=1): no good pair in star/triangle example: True
+  counting step tight at m = 2r+2 (r=2): no good pair in star/triangle example: True
+  counting step tight at m = 2r+2 (r=3): no good pair in star/triangle example: True
+  counting step tight at m = 2r+2 (r=4): no good pair in star/triangle example: True
+  counting step tight at m = 2r+2 (r=5): no good pair in star/triangle example: True
+== excluded_case.py (Proposition 9.2 excluded case; counting stress test)
+(a) bit e of floor(Lambda/D) non-BLF cases (expected 0): 0
+(b) examples where bit e of (Lambda mod D) is not BLF (K, a, D, e, truth table):
+    (-8, (-8, -8, -6), 5, 2, 20)
+    (-8, (-8, -8, -6), 10, 3, 40)
+    (-8, (-8, -8, -6), 11, 2, 20)
+    (-8, (-8, -8, -5), 10, 3, 40)
+    (-8, (-8, -8, -4), 5, 2, 20)
+    smallest found: (-8, (-8, -8, -4), 5, 2) table over z = 000..111: [0, 0, 1, 0, 1, 0, 0, 0]
+    clean example: Lambda = 1 + z0 + z1 + 2 z2, D = 5, bit 2 of Lambda mod 5: [0, 0, 0, 1, 0, 1, 0, 0] = rule 40 BLF: False | equals z2 AND (z0 XOR z1): True
+(c) counting step: a good pair existed in all 18000 adversarial assignments at m = 2r+3, r = 1..6
+== fixed_encoding_probe.py 12 (Prop 9.4 with a fixed small encoding; inconclusive probe)
+rule 160, b=3, pi=1, N=4: M < 2^12 that work: [3057, 4035]
+rule 160, b=3, pi=1, N=5: M < 2^12 that work: none
+rule 160, b=4, pi=2, N=4: M < 2^12 that work: [197, 257, 317]
+rule 160, b=4, pi=2, N=5: M < 2^12 that work: none
+rule 110, b=3, pi=1, N=4: M < 2^12 that work: none
+rule 110, b=3, pi=1, N=5: M < 2^12 that work: none
+rule 110, b=4, pi=2, N=4: M < 2^12 that work: none
+rule 110, b=4, pi=2, N=5: M < 2^12 that work: none
+rule 232, b=3, pi=1, N=4: M < 2^12 that work: none
+rule 232, b=3, pi=1, N=5: M < 2^12 that work: none
+rule 232, b=4, pi=2, N=4: M < 2^12 that work: none
+rule 232, b=4, pi=2, N=5: M < 2^12 that work: none
+
+== (recorded from a separate run, 2m35s) fixed_encoding_probe with M < 2^17
+rule 110, b=3, pi=1, N=5: M < 2^17 that work: none
+rule 110, b=3, pi=1, N=6: M < 2^17 that work: none
+rule 110, b=4, pi=2, N=5: M < 2^17 that work: none
+rule 110, b=4, pi=2, N=6: M < 2^17 that work: none
+rule 160, b=3, pi=1, N=5: M < 2^17 that work: [97795, 98243]
+rule 160, b=3, pi=1, N=6: M < 2^17 that work: none
+rule 160, b=4, pi=2, N=5: M < 2^17 that work: none
+rule 160, b=4, pi=2, N=6: M < 2^17 that work: none

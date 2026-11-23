@@ -11,7 +11,11 @@ project:
     it proves the exact counts |BLF(n)| = 4, 16, 208 and 10368 for n = 1, 2, 3 and 4 by a verified
     pruned search checked by the kernel, that BLF(3) is exactly the threshold functions XOR
     GF(2)-affine functions, and that BLF(4) adds exactly the affine translates of bit 1 of
-    x1 + x2 + x3 + x4, which is not itself threshold XOR affine.
+    x1 + x2 + x3 + x4, which is not itself threshold XOR affine. It also proves, for every n, that f is
+    BLF iff f = floor(t + r.x) mod 2 for real t and r; the selector lemma (z AND T(x) is bit j of an
+    integer affine form iff T has integer weights with sum of absolute values below 2^j), with a gated
+    threshold showing that no bit position below 4 serves every BLF function of five variables; and,
+    through a square identity, that two and three steps of Rule 110 are not BLF.
   authors:
     - "Joseph S. Farland"
   license: "Apache-2.0"
@@ -26,9 +30,9 @@ sources:
   - title: "Boolean functions that are one bit of a linear form: a toric identity, exact counts and asymptotics"
     authors:
       - "Joseph S. Farland"
-    id: "doi:10.5281/zenodo.24467978"
+    id: "doi:10.5281/zenodo.24467977"
     type: "article"
-    location: "Preprint, Zenodo, 2026"
+    location: "Preprint, Zenodo, 2026 (all versions; numbering of version 1.1)"
     relationship: "formalizes"
     note: >-
       The preprint labels each result as Lean-certified, computer-certified or proved on paper
@@ -51,14 +55,17 @@ related_formalizations: []
 
 status:
   scope: >-
-    Formalized: the parallelogram inequality for floors of linear forms, threshold implies BLF and
-    closure of BLF under XOR with GF(2)-affine functions (every n), and the exact counts
+    Formalized: the characterization by floor(u) mod 2 for real affine u, the parallelogram inequality
+    for floors of linear forms, threshold implies BLF and closure of BLF under XOR with GF(2)-affine
+    functions (every n), the selector lemma for gated thresholds (every n and j) with the example that
+    needs bit 4, that two and three steps of Rule 110 are not BLF, and the exact counts
     |BLF(n)| for n = 1, 2, 3, 4, the equality BLF(3) = threshold XOR affine and the description of
     BLF(4) as threshold XOR affine together with the translates of bit 1 of x1 + x2 + x3 + x4.
     It also proves that this function is not threshold XOR affine. Not formalized, and labeled in the preprint as computer-certified
-    or as paper proofs: the characterization by floor(u) mod 2 for real affine u, the identity
+    or as paper proofs: the identity
     |BLF(n)| = 2^n (R_n + 1) with the toric chamber count R_n, the counts for n = 5 and 6, the
-    asymptotics, the anti-Hadamard second-order term, and the cellular-automaton results.
+    asymptotics, the anti-Hadamard matrices and the bit-position asymptotics, and the operation counts
+    for cellular automata (one-floor lemma, two-operation bound, three-operation construction).
   sorry_count: 0
   sorry_in_definitions: 0
   axioms: ["propext", "Classical.choice", "Quot.sound"]
@@ -132,6 +139,11 @@ review:
 alignment:
   namespace: "BLF"
   statements:
+    - source: "Proposition 2.1"
+      lean: "BLF.isBLF_iff_floor"
+      module: "Challenge"
+      status: "proved"
+      note: "Every n; t and r real, Int.floor, parity."
     - source: "Lemma 2.4"
       lean: "BLF.floor_parallelogram"
       module: "Challenge"
@@ -167,5 +179,31 @@ alignment:
       module: "Challenge"
       status: "proved"
       note: "Bit 1 of x1 + x2 + x3 + x4 is BLF and not threshold XOR affine."
+
+    - source: "Lemma 8.2"
+      lean: "BLF.selector_iff"
+      module: "Challenge"
+      status: "proved"
+      note: "Every n and j, in the equivalent form: realizable at bit j iff some integer representation has sum |w_i| < 2^j."
+    - source: "Lemma 8.2 (status line: the threshold 0xfc80)"
+      lean: "BLF.gated_threshold_bit_four"
+      module: "Challenge"
+      status: "proved"
+      note: "z AND [x1 + 2x2 + 2x3 + 3x4 >= 5] is bit 4 and not bit 3."
+    - source: "Proposition 8.1 (status line: j*(5) >= 4)"
+      lean: "BLF.blf_five_needs_bit_four"
+      module: "Challenge"
+      status: "proved"
+      note: "No bit position j <= 3 serves every BLF function of five variables."
+    - source: "Corollary 9.3 (two steps)"
+      lean: "BLF.rule110Two_not_isBLF"
+      module: "Challenge"
+      status: "proved"
+      note: "Two steps of Rule 110 on a window of five cells are not BLF."
+    - source: "Corollary 9.3 (three steps)"
+      lean: "BLF.rule110Three_not_isBLF"
+      module: "Challenge"
+      status: "proved"
+      note: "Three steps of Rule 110 on a window of seven cells are not BLF."
 
 acknowledgements: "Lean 4 and Mathlib; Claude (Anthropic) agent seats for the mathematics and the formalization; the Palomar starter template for the check scripts."

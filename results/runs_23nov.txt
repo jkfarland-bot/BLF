@@ -16,3 +16,13 @@ p=5 l=3 pad=0 m=96 det=+-2^95 s=84 (A^-1)_0s=113515579023 bits=37 P/r bits=27
 p=7 l=3 pad=9 m=137 det=+-2^136 s=112 (A^-1)_0s=19354866977513592 bits=55 P/r bits=42
 p=11 l=3 pad=0 m=192 det=+-2^191 s=168 (A^-1)_0s=2472107736431047704638287170 bits=91 P/r bits=72
 (13 4 0: m=448, (A^-1)_0s has 611 bits, P/r has 513 bits; run of 23 Nov)
+
+## compute/ca_ops.py 10
+three operations: k = 1, all 256 rules, every row with N <= 10: ok
+three operations: k = 2, all 256 rules, every row with N <= 10: ok
+three operations: k = 3, all 256 rules, every row with N <= 10: ok
+multiply then AND: k = 1, 208 distinct BLF tables among the elementary rules, every row with N <= 10: ok
+three operations: Rule 110, k = 1, 20 random rows of 256 cells: ok
+three operations: Rule 110, k = 2, 20 random rows of 256 cells: ok
+three operations: Rule 110, k = 3, 20 random rows of 256 cells: ok
+rows checked: 1571328 (three operations), 425568 (multiply then AND)

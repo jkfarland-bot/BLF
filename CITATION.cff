@@ -5,7 +5,7 @@ authors:
   - family-names: Farland
     given-names: Joseph S.
     orcid: "https://orcid.org/0009-0007-6809-804X"
-version: "1.0.0"
+version: "1.1.0"
 date-released: "2026-11-23"
 license: Apache-2.0
 repository-code: "https://github.com/jkfarland-bot/BLF"
@@ -15,7 +15,9 @@ abstract: >-
   proofs, for every n, of the parallelogram inequality for floors of linear forms, that threshold
   functions are BLF and that BLF is closed under XOR with affine functions; and of the exact counts
   4, 16, 208, 10368 for n = 1 to 4 with the structure of BLF(3) and BLF(4). Programs rebuilding the
-  counts to n = 6 and the toric chamber counts. Prepared with Claude (Anthropic). No external human
+  counts to n = 6 and the toric chamber counts. Version 1.1 adds Lean proofs of the characterization
+  by floor(u) mod 2, the selector lemma for gated thresholds, and that two and three steps of Rule
+  110 are not BLF, and programs checking the cellular-automaton constructions. Prepared with Claude (Anthropic). No external human
   referee has reviewed this work.
 keywords:
   - Boolean functions
