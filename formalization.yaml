@@ -26,7 +26,7 @@ sources:
   - title: "Boolean functions that are one bit of a linear form: a toric identity, exact counts and asymptotics"
     authors:
       - "Joseph S. Farland"
-    id: "TEMPLATE: preprint DOI"
+    id: "doi:10.5281/zenodo.24467978"
     type: "article"
     location: "Preprint, Zenodo, 2026"
     relationship: "formalizes"

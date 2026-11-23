@@ -9,6 +9,7 @@ version: "1.0.0"
 date-released: "2026-11-23"
 license: Apache-2.0
 repository-code: "https://github.com/jkfarland-bot/BLF"
+doi: "10.5281/zenodo.24466814"
 abstract: >-
   A Boolean function is BLF if it is one bit of an integer linear form with a free constant. Lean 4
   proofs, for every n, of the parallelogram inequality for floors of linear forms, that threshold
@@ -22,3 +23,15 @@ keywords:
   - toric arrangements
   - Lean 4
   - formal verification
+preferred-citation:
+  type: article
+  title: "Boolean functions that are one bit of a linear form: a toric identity, exact counts and asymptotics"
+  authors:
+    - family-names: Farland
+      given-names: Joseph S.
+      orcid: "https://orcid.org/0009-0007-6809-804X"
+  year: 2026
+  publisher:
+    name: Zenodo
+  doi: "10.5281/zenodo.24467978"
+  url: "https://doi.org/10.5281/zenodo.24467978"
