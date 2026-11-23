@@ -1,0 +1,9 @@
+m=0: 2 threshold functions, W1 values [0]
+m=1: 4 threshold functions, W1 values [0, 1]
+m=2: 14 threshold functions, W1 values [0, 1, 2]
+m=3: 104 threshold functions, W1 values [0, 1, 2, 3, 4]
+total 124 threshold functions, mismatches 0
+truth table of [x1+2x2+2x3+3x4>=5] with x1 = LSB: 0xfc80
+W1 = 8
+bit 4 of 7+x1+2x2+2x3+3x4+4z equals z AND T: True
+realizable at bit 3: False
