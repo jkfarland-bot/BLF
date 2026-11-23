@@ -1,0 +1,23 @@
+import Lean
+import Challenge
+
+/-! Control: the same collector on the Challenge file must report `sorryAx`. -/
+
+open Lean Elab Command
+
+#eval show CommandElabM Unit from do
+  let env ← getEnv
+  let allowed : List Name := [``propext, ``Classical.choice, ``Quot.sound]
+  let mut nThm := 0
+  let mut bad : Array Name := #[]
+  for (n, ci) in env.constants.toList do
+    if (`BLF).isPrefixOf n then
+      if ci matches .thmInfo _ then
+        nThm := nThm + 1
+        let axs ← Lean.collectAxioms n
+        if axs.any (fun a => !allowed.contains a) then
+          bad := bad.push n
+  logInfo m!"Challenge BLF theorems: {nThm}; flagged (non-allowed axiom such as sorryAx): {bad.size}"
+
+#print axioms BLF.rule110Two_not_isBLF
+#print axioms BLF.selector_iff

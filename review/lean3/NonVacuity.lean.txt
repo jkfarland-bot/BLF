@@ -1,0 +1,106 @@
+import BLF
+import Solution
+
+/-! Verifier's non-vacuity instances (check 5). -/
+
+namespace BLF
+
+open Finset
+
+/-! ### isBLF_iff_floor with genuinely real (non-dyadic) parameters -/
+
+/-- XOR of two bits is `⌊x0 + x1⌋ mod 2`, hence BLF through the characterization. -/
+example : IsBLF (fun x : Fin 2 → Bool => xor (x 0) (x 1)) := by
+  rw [isBLF_iff_floor]
+  refine ⟨0, fun _ => 1, fun x => ?_⟩
+  rw [Fin.sum_univ_two]
+  cases x 0 <;> cases x 1 <;> norm_num [bval]
+
+/-- Majority of three is `⌊1/3 + (x0 + x1 + x2)/3⌋ mod 2`, with the non-dyadic real `1/3`. -/
+example : IsBLF (fun x : Fin 3 → Bool => decide (2 ≤ bval (x 0) + bval (x 1) + bval (x 2))) := by
+  rw [isBLF_iff_floor]
+  refine ⟨1 / 3, fun _ => 1 / 3, fun x => ?_⟩
+  rw [Fin.sum_univ_three]
+  cases x 0 <;> cases x 1 <;> cases x 2 <;> norm_num [bval, Int.floor_eq_iff]
+
+/-- Forward direction: a BLF function (one step of Rule 110) gets a real representation. -/
+example : ∃ (t : ℝ) (r : Fin 3 → ℝ),
+    ∀ x : Fin 3 → Bool, eca 110 (x 0) (x 1) (x 2) = decide (⌊t + ∑ i, r i * (bval (x i) : ℝ)⌋ % 2 = 1) :=
+  (isBLF_iff_floor (fun x : Fin 3 → Bool => eca 110 (x 0) (x 1) (x 2))).1
+    ⟨2, -7, ![-7, -5, -5], by decide +kernel⟩
+
+/-! ### One step of Rule 110 IS BLF, so `rule110Two_not_isBLF` is not about every function -/
+
+example : IsBLF (fun x : Fin 3 → Bool => eca 110 (x 0) (x 1) (x 2)) :=
+  ⟨2, -7, ![-7, -5, -5], by decide +kernel⟩
+
+/-- One step of Rule 110 on the middle three cells of a 5-cell window is BLF as a 5-variable
+function, unlike `rule110Two`. -/
+example : IsBLF (fun x : Fin 5 → Bool => eca 110 (x 1) (x 2) (x 3)) :=
+  ⟨2, -7, ![0, -7, -5, -5, 0], by decide +kernel⟩
+
+/-! ### selector_iff in both directions -/
+
+/-- Right to left: `T = x0 = [1 ≤ 1·x0]` with `∑|w| = 1 < 2^1` gives a bit-1 representation. -/
+example : ∃ (K c : ℤ) (a : Fin 1 → ℤ), ∀ x z, (z && x 0) = bitAt 1 (lin K a x + c * bval z) :=
+  (selector_iff 1 (fun x : Fin 1 → Bool => x 0)).2 ⟨![1], 1, by simp, by decide +kernel⟩
+
+/-- Right to left on the gated threshold of Section 8 at bit 4 (`∑|w| = 8 < 16`). -/
+example : ∃ (K c : ℤ) (a : Fin 4 → ℤ), ∀ x z,
+    (z && decide (5 ≤ bval (x 0) + 2 * bval (x 1) + 2 * bval (x 2) + 3 * bval (x 3)))
+      = bitAt 4 (lin K a x + c * bval z) :=
+  (selector_iff 4 _).2 ⟨![1, 2, 2, 3], 5, by simp [Fin.sum_univ_four], by decide +kernel⟩
+
+/-- Left to right, with teeth: `z ∧ (x0 xor x1)` is not bit `j` of any integer affine form, for any
+`j`, because XOR is not a threshold function. -/
+example (j : ℕ) : ¬ ∃ (K c : ℤ) (a : Fin 2 → ℤ), ∀ x z,
+    (z && xor (x 0) (x 1)) = bitAt j (lin K a x + c * bval z) := by
+  intro h
+  obtain ⟨w, τ, -, hT⟩ := (selector_iff j (fun x : Fin 2 → Bool => xor (x 0) (x 1))).1 h
+  have h00 := hT ![false, false]
+  have h01 := hT ![false, true]
+  have h10 := hT ![true, false]
+  have h11 := hT ![true, true]
+  simp [Fin.sum_univ_two, bval] at h00 h01 h10 h11
+  omega
+
+/-- Left to right, the weight bound bites: `z ∧ x0` is not bit `0` (it would need `∑|w| < 1`). -/
+example : ¬ ∃ (K c : ℤ) (a : Fin 1 → ℤ), ∀ x z, (z && x 0) = bitAt 0 (lin K a x + c * bval z) := by
+  intro h
+  obtain ⟨w, τ, hS, hT⟩ := (selector_iff 0 (fun x : Fin 1 → Bool => x 0)).1 h
+  have h0 := hT ![false]
+  have h1 := hT ![true]
+  simp [bval] at hS h0 h1
+  -- simp has already turned `∑ |w i| < 2 ^ 0` into `w 0 = 0`
+  simp [hS] at h0 h1
+  omega
+
+/-- ... while `z ∧ x0` is bit 1 of `x0 + z`, directly. -/
+example : ∀ (x : Fin 1 → Bool) (z : Bool), (z && x 0) = bitAt 1 (lin 0 ![1] x + 1 * bval z) := by
+  decide +kernel
+
+/-! ### Some function is not BLF, from the counts -/
+
+example : ∃ f : (Fin 3 → Bool) → Bool, ¬ IsBLF f := by
+  by_contra h
+  simp only [not_exists, not_not] at h
+  have e := Nat.card_congr (Equiv.subtypeUnivEquiv h)
+  rw [blf_count_three] at e
+  simp [Nat.card_eq_fintype_card] at e
+
+example : ∃ f : (Fin 4 → Bool) → Bool, ¬ IsBLF f := by
+  by_contra h
+  simp only [not_exists, not_not] at h
+  have e := Nat.card_congr (Equiv.subtypeUnivEquiv h)
+  rw [blf_count_four] at e
+  simp [Nat.card_eq_fintype_card] at e
+
+/-! ### The headline theorems used together -/
+
+/-- A concrete 5-variable function that is BLF but not at any bit `j ≤ 3`; its existence is the
+content of `blf_five_needs_bit_four`, and it is not `rule110Two`, which is not BLF at all. -/
+example : ∃ f : (Fin 5 → Bool) → Bool, IsBLF f ∧ f ≠ rule110Two := by
+  obtain ⟨f, hf, -⟩ := blf_five_needs_bit_four
+  exact ⟨f, hf, fun e => rule110Two_not_isBLF (e ▸ hf)⟩
+
+end BLF

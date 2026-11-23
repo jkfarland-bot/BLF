@@ -32,18 +32,12 @@ No `sorry` in the development, no `native_decide`, no new axioms: every declarat
 peaks of about 5 GB (leanexport), 4.6 GB (con-ron) and 4.1 GB (nanoda); run one build at a time on
 small machines.
 
-**Review.** `review/` holds two independent verification reports by Claude agents that did not write
-the code, each on an earlier commit: `review/lean1` audited commit `cb688a7` (seven statements:
-`floor_parallelogram`, `threshold_isBLF`, `isBLF_xor_affB`, `blf_count_one` to `blf_count_four`;
-its comparator run was partial, as nanoda ran out of memory in a 6 GiB sandbox), and `review/lean2`
-audited commit `3e2e68f` (those seven, unchanged, plus `blf_three_iff_threshold_xor_affine` and
-`blf_four_iff`; the comparator accepted all nine with all three kernels). The tenth statement,
-`bitOneSum_isBLF_not_txa`, was added at commit `9e48384` after both reports, with a proof
-(`BLF/Strict.lean`) written by the second verifier after its report; no independent report audits it.
-The Lean sources have not changed since `9e48384`. The current ten-theorem submission is verified
-mechanically, not by an independent audit: the CI run on each push builds the project and runs the
-toolchain's lake comparator, which accepts all ten theorems with the Lean kernel, nanoda and con-ron
-and only the standard axioms. See `review/README.md`.
+**Review.** `review/lean3` is an independent audit, by a Claude agent that did not write the code, of
+commit `a5d08ee` and all sixteen statements: fresh rebuild, source hygiene, axiom collector, statement
+audit, non-vacuity, own recounts, seven planted errors, and the comparator with all three kernels. The
+Lean sources have not changed since `a5d08ee`. Two earlier audits of earlier commits (`review/lean1`,
+seven statements; `review/lean2`, nine) are kept for the record. Separately, CI verifies every push
+mechanically with the toolchain's lake comparator. See `review/README.md`.
 
 ## What is proved in Lean
 

@@ -109,32 +109,27 @@ fidelity:
 review:
   status: "agent-reviewed"
   reviewers:
-    - "Two Claude Opus verifier agents (Anthropic) that did not write the code, each auditing an earlier commit: review/lean1 (commit cb688a7, seven statements) and review/lean2 (commit 3e2e68f, nine statements). No independent audit covers the tenth statement. Cold readers of the paper proofs: coldread/."
+    - "Claude Opus verifier agents (Anthropic) that did not write the code: review/lean3 audited commit a5d08ee and all sixteen statements; the earlier reports review/lean2 (commit 3e2e68f, nine statements) and review/lean1 (commit cb688a7, seven statements) are kept for the record. Cold readers of the paper proofs: coldread/."
   notes: >-
-    Independent audits of earlier commits. review/lean1/VERIFY_LEAN.md checked commit cb688a7,
-    whose Challenge.lean stated seven theorems: floor_parallelogram, threshold_isBLF,
-    isBLF_xor_affB and blf_count_one to blf_count_four. On a fresh copy it rebuilt the project,
-    checked source hygiene and the byte identity of the definitions, collected the axioms of every
-    theorem, audited those seven statements, proved non-vacuity instances, recounted n <= 4 with
-    its own code and planted errors that the build rejected. Its comparator run was partial: the
-    Lean kernel and con-ron accepted, and nanoda ran out of memory on blf_count_four in a 6 GiB
-    sandbox. review/lean2/VERIFY_LEAN2.md checked commit 3e2e68f, whose Challenge.lean stated nine
-    theorems: the seven above, textually unchanged (it checked the diff from cb688a7), plus
-    blf_three_iff_threshold_xor_affine and blf_four_iff. It made the same checks on those nine,
-    and lake comparator accepted all nine with the Lean kernel, nanoda and con-ron. The tenth
-    statement, bitOneSum_isBLF_not_txa, with its proof in BLF/Strict.lean, was added at commit
-    9e48384, after both reports. That proof was written by the second verifier agent after its
-    report, from its non-vacuity lemma (review/lean2/NonVacuity2.lean.txt); no independent report
-    audits the tenth statement. From 3e2e68f to 9e48384 the Lean sources changed only by that
-    statement, its proof, its comparator entry and the import in BLF.lean; they have not changed
-    since 9e48384.
-    Mechanical verification of the ten-theorem submission, distinct from the audits above: on
-    every push, GitHub Actions builds the project, checks the Lean source requirements and the
-    byte identity of the definitions block, validates this file, and runs the toolchain's lake
-    comparator, which accepts all ten theorems with the Lean kernel, nanoda and con-ron and with
-    only propext, Quot.sound and Classical.choice permitted (for example the run on commit
-    3d90ee7). No human referee has reviewed the preprint or the formalization; the author is
-    responsible for both.
+    Independent audit of the submission. review/lean3/VERIFY_LEAN3.md checked commit a5d08ee, whose
+    Challenge.lean states all sixteen theorems listed in comparator.json. On a fresh copy it rebuilt
+    the project, checked source hygiene and the byte identity of the definitions block, collected the
+    axioms of all 334 theorems in the BLF namespace (only propext, Classical.choice and Quot.sound),
+    audited each of the sixteen statements (checking eca, rule110Two and rule110Three against its own
+    Python implementation of Rule 110), proved non-vacuity instances, recounted with its own code,
+    planted seven errors that were all rejected, and ran lake comparator, which accepted all sixteen
+    theorems with the Lean kernel, nanoda and con-ron. The Lean sources have not changed since
+    a5d08ee; later commits change documentation, metadata and the programs in compute/ only. Earlier
+    audits, kept for the record: review/lean1 (commit cb688a7, the seven statements floor_parallelogram
+    to blf_count_four; its comparator run was partial, as nanoda ran out of memory in a 6 GiB sandbox)
+    and review/lean2 (commit 3e2e68f, those seven plus blf_three_iff_threshold_xor_affine and
+    blf_four_iff). The proof of bitOneSum_isBLF_not_txa was written by the second verifier after its
+    report and is covered by the third audit. review/README.md tabulates the coverage.
+    Mechanical verification, separate from the audits: on every push, GitHub Actions builds the
+    project, checks the Lean source requirements and the byte identity of the definitions block,
+    validates this file, and runs the toolchain's lake comparator with the Lean kernel, nanoda and
+    con-ron, permitting only propext, Quot.sound and Classical.choice. No human referee has reviewed
+    the preprint or the formalization; the author is responsible for both.
 
 alignment:
   namespace: "BLF"

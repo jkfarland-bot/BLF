@@ -1,0 +1,40 @@
+import BLF
+
+/-! Verifier's evaluation of the statement definitions (check 4). -/
+
+namespace BLF
+
+-- bitAt uses floor division (Int.ediv by a positive divisor) and agrees with two's complement.
+#eval [bitAt 0 (-1), bitAt 5 (-1), bitAt 1 (-3), bitAt 0 (-3), bitAt 2 (-3), bitAt 1 6, bitAt 0 6]
+-- expected: -1 = ...1111 -> true, true; -3 = ...11101 -> bit1 false, bit0 true, bit2 true; 6 = 110
+#eval ((-7 : ℤ) / 4, (-7 : ℤ) % 4, (7 : ℤ) / (-4), Int.fdiv (-7) 4)
+
+-- eca on all 8 patterns, listed in the order (l,c,r) = 111,110,101,100,011,010,001,000
+#eval [eca 110 true true true, eca 110 true true false, eca 110 true false true,
+  eca 110 true false false, eca 110 false true true, eca 110 false true false,
+  eca 110 false false true, eca 110 false false false]
+-- Wolfram numbering for other rules: rule 30 = 00011110, rule 90 = 01011010
+#eval (List.range 8).map (fun v => eca 30 (v.testBit 2) (v.testBit 1) (v.testBit 0))
+#eval (List.range 8).map (fun v => eca 90 (v.testBit 2) (v.testBit 1) (v.testBit 0))
+
+/-- Truth table as a 0/1 string, index `v = ∑ x_i 2^i` (so `x 0` is bit 0 of the index). -/
+def tt (n : ℕ) (f : (Fin n → Bool) → Bool) : String :=
+  String.join ((List.range (2 ^ n)).map fun v => if f (fun i => v.testBit i.val) then "1" else "0")
+
+#eval tt 3 (fun x => eca 110 (x 0) (x 1) (x 2))
+#eval tt 5 rule110Two
+#eval tt 7 rule110Three
+
+-- Kernel-checked agreement with the verifier's Python truth tables (vscratch3/r110_tt_python.txt).
+example : tt 5 rule110Two = "00001111110000111111000111001100" := by decide +kernel
+example : tt 7 rule110Three =
+    "00000000111111110000111111110011111100000000001111110000001111111111111100111100111100000000001111110000000000110000111111110000" := by
+  decide +kernel
+
+-- A direct spot check of the window orientation: a single live cell at x 4 (rightmost) grows left
+-- under Rule 110 (pattern 001 -> 1), so after two steps the centre is alive; a single live cell at
+-- x 0 (leftmost) does not reach the centre (pattern 100 -> 0).
+example : rule110Two ![false, false, false, false, true] = true := by decide
+example : rule110Two ![true, false, false, false, false] = false := by decide
+
+end BLF

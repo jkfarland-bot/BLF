@@ -1,0 +1,12 @@
+import Lean
+import Challenge
+
+open Lean Elab Command
+
+#eval show CommandElabM Unit from do
+  let env ← getEnv
+  for (n, ci) in env.constants.toList do
+    if (`BLF).isPrefixOf n then
+      if ci matches .thmInfo _ then
+        let axs ← Lean.collectAxioms n
+        if !axs.contains ``sorryAx then logInfo m!"not flagged: {n} : {ci.type}"
